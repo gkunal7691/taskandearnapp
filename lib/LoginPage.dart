@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'SignUpPage.dart';
+
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var _width = MediaQuery.of(context).size.width;
     return MaterialApp(
       home: LoginPageWidget(),
     );
@@ -152,5 +153,8 @@ class _LoginPageWidgetSate extends State<LoginPageWidget> {
 
   onPressedSignUpButton() {
     print("onPressedSignUpButton");
+    Navigator.pushReplacement(context, MaterialPageRoute(
+        builder: (context) => SignUpPage()
+    ));
   }
 }
