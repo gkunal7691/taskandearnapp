@@ -1,4 +1,4 @@
-# task_and_earn
+# Task And Earn
 
 A  Flutter application for taskandearn.com.
 
