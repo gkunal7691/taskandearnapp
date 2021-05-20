@@ -40,8 +40,9 @@ class ProgressHUD extends StatelessWidget {
                     "Please wait...",
                     style: TextStyle(
                       decoration: TextDecoration.none,
-                      fontSize: 18.0,
+                      fontSize: 20.0,
                       color: Colors.black,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:task_and_earn/models/PopularService.dart';
 import 'ApiManager.dart';
 import '../models/post_a_job/Category.dart';
 import '../models/post_a_job/PostAJob.dart';
@@ -28,6 +29,8 @@ class CategoryService {
       throw Exception("No Internet connection");
     } on TimeoutException {
       throw Exception("Timeout");
+    } catch(e) {
+      throw Exception("Exception $e");
     }
   }
 
@@ -48,6 +51,8 @@ class CategoryService {
       throw Exception("No Internet connection");
     } on TimeoutException {
       throw Exception("Timeout");
+    } catch(e) {
+      throw Exception("Exception $e");
     }
   }
 
@@ -56,7 +61,7 @@ class CategoryService {
     try {
       var headers = {'Content-type': 'application/json'};
       var bodyData = json.encode(taskRequest.toJson());
-      print("cs onPostAJob bodyData $bodyData");
+      // print("cs onPostAJob bodyData $bodyData");
       final response = await http.post(Uri.parse(ApiManager.baseUrl + "task"), headers: headers, body: bodyData);
       print("cs response ${response.body}");
 
@@ -70,7 +75,29 @@ class CategoryService {
     } on TimeoutException {
       throw Exception("Timeout");
     } catch(e) {
-      throw Exception("ps Exception $e");
+      throw Exception("Exception $e");
+    }
+  }
+
+  Future<PopularServiceResponse> getPopularServices(String token) async {
+    try {
+      var headers = {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+      final response = await http.get(Uri.parse(ApiManager.baseUrl + "category/popular-service"), headers: headers);
+
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        return PopularServiceResponse.fromJson(json.decode(response.body));
+      } else {
+        throw new Exception("Failed to load data");
+      }
+    } on SocketException {
+      throw Exception("No Internet connection");
+    } on TimeoutException {
+      throw Exception("Timeout");
+    } catch(e) {
+      throw Exception("Exception $e");
     }
   }
 }
