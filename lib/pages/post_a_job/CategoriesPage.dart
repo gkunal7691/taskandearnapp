@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:task_and_earn/pages/become_a_earner/AboutYourself.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
-import 'package:task_and_earn/models/Category.dart';
+import '../../models/post_a_job/Category.dart';
 import 'SubCategoriesPage.dart';
 import 'package:task_and_earn/services/CategoryService.dart';
 import 'package:toast/toast.dart';
@@ -8,17 +9,25 @@ import '../HomePage.dart';
 import '../ProgressHUD.dart';
 
 class CategoriesPage extends StatelessWidget {
+  final bool isPostAJob;
+
+  const CategoriesPage({Key key, @required this.isPostAJob}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Task and Earn",
-      home: CategoriesPageWidget(),
+      home: CategoriesPageWidget(isPostAJob: isPostAJob),
     );
   }
 }
 
 class CategoriesPageWidget extends StatefulWidget {
+  final bool isPostAJob;
+
+  const CategoriesPageWidget({Key key, @required this.isPostAJob}) : super(key: key);
+
   @override
   _CategoriesPageWidgetState createState() => _CategoriesPageWidgetState();
 }
@@ -37,6 +46,7 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
   @override
   void initState() {
     super.initState();
+    print("cp isPostAJob ${widget.isPostAJob}");
     onGetToken();
     onGetCategories();
   }
@@ -60,7 +70,6 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
         toolbarHeight: 0.0,
       ),
       body: SingleChildScrollView(
-        child: Container(
           child: Column(
             children: [
               Padding(padding: EdgeInsets.only(top: 20.0)),
@@ -77,7 +86,7 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
                   ),
                   Container(
                     child: Text(
-                      "Post a Job",
+                      widget.isPostAJob ? "Post a Job" : "Become a earner",
                       style: TextStyle(
                           fontSize: 25.0,
                           fontWeight: FontWeight.bold
@@ -91,7 +100,7 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
                   Container(
                     padding: EdgeInsets.only(left: 55.0),
                     child: Text(
-                      "Select task category.",
+                      widget.isPostAJob ? "Select task category." : "Select the category you want to work.",
                       style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.bold
@@ -154,7 +163,6 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
               ),
             ],
           ),
-        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.arrow_upward, size: 35.0),
@@ -250,15 +258,24 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
 
   void onSelectCategory(Category category) {
     // print("cp category: ${category.toJson()}");
-    if(category != null) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-          SubCategoriesPage(
-              selectedCategory: category,
-              selectedSubCategories: [],
-              taskDetails: null, address: null,
-          )));
+    if(widget.isPostAJob) {
+      if(category != null) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+            SubCategoriesPage(
+                isPostAJob: widget.isPostAJob,
+                selectedCategory: category,
+                selectedSubCategories: [],
+                taskDetails: null, address: null,
+            )));
+      } else {
+        onShowToast("Something went wrong, please try again", 2);
+      }
     } else {
-      onShowToast("Something went wrong, please try again", 2);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+          AboutYourselfPage(
+            isPostAJob: widget.isPostAJob,
+            selectedCategory: category, about: null,
+          )));
     }
   }
 

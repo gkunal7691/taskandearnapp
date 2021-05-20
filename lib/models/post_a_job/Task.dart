@@ -1,5 +1,5 @@
-import 'package:task_and_earn/models/Category.dart';
-import 'User.dart';
+import 'Category.dart';
+import '../User.dart';
 
 class Task {
   int taskId;
@@ -79,20 +79,15 @@ class TaskRequest {
   );
 
   Map<String, dynamic> toJson() {
-    try {
-      Map<String, dynamic> map = {
-        "categoryId": categoryId != null ? categoryId : null,
-        "title": title != null ? title : null,
-        "description": description != null ? description : null,
-        "price": price != null ? price : null,
-        "subCatagoriesId": subCatagoriesId,
-        "address": address != null ? address.toJson() : null,
-        "user": user != null ? user.toJson() : null,
-      };
-      return map;
-    } catch(e) {
-      print("tm $e");
-      return null;
-    }
+    Map<String, dynamic> map = {
+      "categoryId": categoryId != null ? categoryId : null,
+      "title": title != null ? title : null,
+      "description": description != null ? description : null,
+      "price": price != null ? price : null,
+      "subCatagoriesId": subCatagoriesId,
+      "address": address != null ? address.toJson() : null,
+      "user": user != null ? user.toJson() : null,
+    };
+    return map;
   }
 }

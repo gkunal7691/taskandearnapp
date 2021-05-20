@@ -57,18 +57,18 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           children: [
             Row(
               children: [
-                Container(
-                  padding: EdgeInsets.only(left: 15.0),
-                  child: GestureDetector(
+                GestureDetector(
+                  child: Container(
+                    padding: EdgeInsets.only(left: 15.0),
                     child: Icon(
-                        Icons.view_headline,
+                        Icons.sort,
                         size: 40.0,
                         color: Color(0xFF098CC3)
-                    ),//Icons.view_week
-                    onTap: () {
-                      _scaffoldKey.currentState.openDrawer();
-                    },
+                    ),
                   ),
+                  onTap: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
                 ),
                 Container(
                   padding: EdgeInsets.only(left: 10.0),
@@ -104,7 +104,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    onRouteToCategory();
+                    onRouteToCategory(true);
                   },
                   child: Container(
                     width: 140,
@@ -141,8 +141,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 Padding(padding: EdgeInsets.only(right: 20.0)),
                 GestureDetector(
                   onTap: () {
-                    // print("on click Become a Earner");
-                    onShowToast("Become a Earner Feature is in under process", 2);
+                    onRouteToCategory(false);
                   },
                   child: Container(
                     width: 140,
@@ -367,14 +366,15 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     onShowToast("Logout Successful", 3);
     await sharedPref.onEmptySharedPreference();
     await sharedPref.onGetSharedPreferencesValue("tokenKey");
-    await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
   void onShowToast(String msg, int timeInSec) {
     Toast.show(msg, context, duration: timeInSec, gravity:  Toast.BOTTOM);
   }
 
-  void onRouteToCategory() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CategoriesPage()));
+  void onRouteToCategory(bool isPostAJob) {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+        CategoriesPage(isPostAJob: isPostAJob)));
   }
 }

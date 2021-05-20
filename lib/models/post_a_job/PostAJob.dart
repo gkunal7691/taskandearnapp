@@ -1,4 +1,4 @@
-import 'package:task_and_earn/models/Task.dart';
+import 'Task.dart';
 
 class PostAJobResponse {
   final bool success;

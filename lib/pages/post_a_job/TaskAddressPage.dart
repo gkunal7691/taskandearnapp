@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:task_and_earn/models/Category.dart';
-import 'package:task_and_earn/models/Task.dart';
+import '../../models/post_a_job/Category.dart';
+import '../../models/post_a_job/Task.dart';
 import 'package:task_and_earn/models/User.dart';
+import 'package:task_and_earn/models/become_a_earner/About_Model.dart';
+import 'package:task_and_earn/models/become_a_earner/Professional.dart';
+import 'package:task_and_earn/pages/become_a_earner/AboutYourself.dart';
 import 'package:task_and_earn/services/CategoryService.dart';
+import 'package:task_and_earn/services/ProfessionalService.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
 import 'package:toast/toast.dart';
 import '../ProgressHUD.dart';
@@ -11,17 +15,21 @@ import 'TaskDetailsPage.dart';
 
 // ignore: must_be_immutable
 class TaskAddressPage extends StatelessWidget {
+  final bool isPostAJob;
   Category selectedCategory;
   List<int> selectedSubCategories;
   TaskDetails taskDetails;
   Address address;
+  final About about;
 
   TaskAddressPage({
     Key key,
+    @required this.isPostAJob,
     @required this.selectedCategory,
     @required this.selectedSubCategories,
     @required this.taskDetails,
     @required this.address,
+    @required this.about,
   }) : super(key: key);
 
   @override
@@ -30,10 +38,11 @@ class TaskAddressPage extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Task and Earn",
       home: TaskAddressPageWidget(
+        isPostAJob: isPostAJob,
         selectedCategory: selectedCategory,
         selectedSubCategories: selectedSubCategories,
         taskDetails: taskDetails,
-        address: address,
+        address: address, about: about,
       ),
     );
   }
@@ -41,17 +50,21 @@ class TaskAddressPage extends StatelessWidget {
 
 // ignore: must_be_immutable
 class TaskAddressPageWidget extends StatefulWidget {
+  final bool isPostAJob;
   Category selectedCategory;
   List<int> selectedSubCategories;
   TaskDetails taskDetails;
   Address address;
+  About about;
 
   TaskAddressPageWidget({
     Key key,
+    @required this.isPostAJob,
     @required this.selectedCategory,
     @required this.selectedSubCategories,
     @required this.taskDetails,
     @required this.address,
+    @required this.about,
   }) : super(key: key);
 
   @override
@@ -59,29 +72,32 @@ class TaskAddressPageWidget extends StatefulWidget {
 }
 
 class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
+  CategoryService categoryService = new CategoryService();
+  ProfessionalService professionalService = new ProfessionalService();
   SharedPref sharedPref = new SharedPref();
   String token;
   dynamic loggedInUserId;
   String loggedInUserFName;
   String loggedInUserLName;
+  bool isApiCallProcess = false;
+
   Address address = new Address();
   final _taskAddressFormKey = GlobalKey<FormState>();
   final streetController = TextEditingController();
   final cityController = TextEditingController();
   final pinCodeController = TextEditingController();
   final countryController = TextEditingController();
-  CategoryService categoryService = new CategoryService();
-  bool isApiCallProcess = false;
 
   TaskRequest taskRequest = new TaskRequest();
   User user = new User();
+  ProfessionalRequest professionalRequest = new ProfessionalRequest();
 
   @override
   void initState() {
     super.initState();
-    print("tap selectedCategory ${widget.selectedCategory.toJson()}");
-    print("tap selectedSubCategories ${widget.selectedSubCategories}");
-    print("tap taskDetails ${widget.taskDetails.toJson()}");
+    // print("tap selectedCategory ${widget.selectedCategory.toJson()}");
+    // print("tap selectedSubCategories ${widget.selectedSubCategories}");
+    // print("tap taskDetails ${widget.taskDetails.toJson()}");
     if(widget.address != null) {
       print("tap address ${widget.address.toJson()}");
       setState(() {
@@ -91,6 +107,9 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
         pinCodeController.text = widget.address.pincode;
         countryController.text = widget.address.country;
       });
+    }
+    if(widget.about != null) {
+      print("tap about ${widget.about.toJson()}");
     }
     onGetToken();
   }
@@ -125,7 +144,7 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                             child: Icon(Icons.arrow_back_ios, size: 35.0, color: Color(0xFF098CC3)),
                           ),
                           onTap: () {
-                            onRouteTaskDetailsPage();
+                            onRouteBackPage();
                           },
                         ),
                         Expanded(
@@ -431,61 +450,136 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
     });
   }
 
-  void onRouteTaskDetailsPage() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-        TaskDetailsPage(
+  Future onSubmitAddress() async {
+    if(_taskAddressFormKey.currentState.validate()) {
+      _taskAddressFormKey.currentState.save();
+      // print("tap widget.isPostAJob ${widget.isPostAJob}");
+      if(widget.isPostAJob) {
+        await onPostJob();
+      } else {
+        await onCreateProfessional();
+      }
+    }
+  }
+
+  void onRouteBackPage() {
+    if(widget.isPostAJob) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+          TaskDetailsPage(
+            isPostAJob: widget.isPostAJob,
             selectedCategory: widget.selectedCategory,
             selectedSubCategories: widget.selectedSubCategories,
             taskDetails: widget.taskDetails,
             address: address != null ? address : widget.address,
-        )));
-  }
-
-  Future onSubmitAddress() async {
-    if(_taskAddressFormKey.currentState.validate()) {
-      _taskAddressFormKey.currentState.save();
-      await onPostJob();
+          )));
+    } else {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+          AboutYourselfPage(
+            isPostAJob: widget.isPostAJob,
+            about: widget.about, selectedCategory: widget.selectedCategory,
+          )));
     }
   }
 
   Future onPostJob() async {
-    try {
-      setState(() {
-        isApiCallProcess = true;
-        user.userId = int.tryParse(loggedInUserId);
-        user.firstName = loggedInUserFName;//
-        user.lastName = loggedInUserLName;//
+    if(widget.isPostAJob) {
+      try {
+        setState(() {
+          isApiCallProcess = true;
+          user.userId = int.tryParse(loggedInUserId);
+          user.firstName = loggedInUserFName;//
+          user.lastName = loggedInUserLName;//
 
-        taskRequest.title = widget.taskDetails.taskTitle;
-        taskRequest.description = widget.taskDetails.taskDescription;
-        taskRequest.price = widget.taskDetails.taskPrice;
+          taskRequest.title = widget.taskDetails.taskTitle;
+          taskRequest.description = widget.taskDetails.taskDescription;
+          taskRequest.price = widget.taskDetails.taskPrice;
 
-        taskRequest.categoryId = widget.selectedCategory.categoryId.toString();
-        taskRequest.address = address != null ? address : widget.address;
-        taskRequest.subCatagoriesId =
-            List.from(widget.selectedSubCategories.map((e) => e));
-        taskRequest.user = user;
-      });
-    } catch(e) {
-      print("tap $e");
-      setState(() {
-        isApiCallProcess = false;
+          taskRequest.categoryId =
+              widget.selectedCategory.categoryId.toString();
+          taskRequest.address = address != null ? address : widget.address;
+          taskRequest.subCatagoriesId =
+              List.from(widget.selectedSubCategories.map((e) => e));
+          taskRequest.user = user;
+        });
+      } catch (e) {
+        setState(() {
+          isApiCallProcess = false;
+          onShowToast("Something went wrong!", 2);
+        });
+      }
+      await categoryService.onPostAJob(taskRequest).then((res) => {
+        setState(() {
+          isApiCallProcess = false;
+        }),
+        if(res.success) {
+          onShowToast("Job Posted Successfully", 3),
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) =>
+              JobPostedSuccessPage(
+                taskRequest: taskRequest, createdTask: res.data,
+                professional: null, professionalRequest: null, isPostAJob: widget.isPostAJob,
+              ))),
+        } else {
+            onShowToast("Something went wrong!", 2),
+        }
       });
     }
-    await categoryService.onPostAJob(taskRequest).then((res) => {
-      setState(() {
-        isApiCallProcess = false;
-      }),
-      if(res.success) {
-        onShowToast("Job Posted Successfully", 3),
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-            JobPostedSuccessPage(
-              taskRequest: taskRequest, createdTask: res.data,
-            ))),
-      } else {
-        onShowToast("Something went wrong!", 2),
+  }
+
+  Future onCreateProfessional() async {
+    print("tap onCreateProfessional");
+    if(!widget.isPostAJob) {
+      try{
+        setState(() {
+          isApiCallProcess = true;
+          professionalRequest.address = address != null ? address : widget.address;
+          professionalRequest.categoryId = widget.selectedCategory.categoryId;
+          professionalRequest.categoryName = widget.selectedCategory.categoryName;//
+
+          professionalRequest.title = widget.about.title;
+          professionalRequest.gender = widget.about.gender;
+          professionalRequest.phone = widget.about.phone;
+          professionalRequest.dob = widget.about.dob;
+          professionalRequest.skills = widget.about.skills;
+          professionalRequest.introduction = widget.about.introduction;
+          professionalRequest.price = widget.about.price;
+
+          user.userId = int.tryParse(loggedInUserId);
+          user.firstName = loggedInUserFName;//
+          user.lastName = loggedInUserLName;//
+          professionalRequest.user = user;
+        });
+        // print("tap professionalRequest ${professionalRequest.toJson()}");
+      } catch(e) {
+        setState(() {
+          isApiCallProcess = false;
+        });
+        onShowToast("Something went wrong!", 2);
       }
-    });
+      await professionalService.onCreateProfessional(professionalRequest).then((res) => {
+        setState(() {
+          isApiCallProcess = false;
+        }),
+        if(res.success) {
+          onShowToast("Profile created Successfully", 3),
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) =>
+              JobPostedSuccessPage(
+                taskRequest: taskRequest, createdTask: null,
+                professionalRequest: professionalRequest,
+                professional: res.data, isPostAJob: widget.isPostAJob,
+              ))),
+        } else {
+          onShowToast("Something went wrong!", 2),
+        }
+      }).catchError((e) {
+        print("$e");
+        setState(() {
+          isApiCallProcess = false;
+        });
+        onShowToast("$e", 2);
+      });
+    }
   }
 
   void onShowToast(String msg, int timeInSec) {

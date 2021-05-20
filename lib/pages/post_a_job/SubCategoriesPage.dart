@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
-import 'package:task_and_earn/models/Category.dart';
-import 'package:task_and_earn/models/SubCategory.dart';
+import '../../models/post_a_job/Category.dart';
+import '../../models/post_a_job/SubCategory.dart';
 import 'package:task_and_earn/services/CategoryService.dart';
 import 'package:toast/toast.dart';
 import '../ProgressHUD.dart';
@@ -10,6 +10,7 @@ import 'TaskDetailsPage.dart';
 
 // ignore: must_be_immutable
 class SubCategoriesPage extends StatelessWidget {
+  final bool isPostAJob;
   Category selectedCategory;
   List<int> selectedSubCategories;
   TaskDetails taskDetails;
@@ -17,6 +18,7 @@ class SubCategoriesPage extends StatelessWidget {
 
   SubCategoriesPage({
     Key key,
+    @required this.isPostAJob,
     @required this.selectedCategory,
     @required this.selectedSubCategories,
     @required this.taskDetails,
@@ -29,6 +31,7 @@ class SubCategoriesPage extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Task and Earn",
       home: SubCategoriesPageWidget(
+        isPostAJob: isPostAJob,
         selectedCategory: selectedCategory,
         selectedSubCategories: selectedSubCategories,
         taskDetails: taskDetails,
@@ -40,6 +43,7 @@ class SubCategoriesPage extends StatelessWidget {
 
 // ignore: must_be_immutable
 class SubCategoriesPageWidget extends StatefulWidget {
+  final bool isPostAJob;
   Category selectedCategory;
   List<int> selectedSubCategories;
   TaskDetails taskDetails;
@@ -47,6 +51,7 @@ class SubCategoriesPageWidget extends StatefulWidget {
 
   SubCategoriesPageWidget({
     Key key,
+    @required this.isPostAJob,
     @required this.selectedCategory,
     @required this.selectedSubCategories,
     @required this.taskDetails,
@@ -60,6 +65,7 @@ class SubCategoriesPageWidget extends StatefulWidget {
 class _SubCategoriesPageWidgetState extends State<SubCategoriesPageWidget> {
   CategoryService categoryService = new CategoryService();
   SharedPref sharedPref = new SharedPref();
+  bool isShowEmptyError = false;
   bool isApiCallProcess = false;
   String token;
 
@@ -98,50 +104,50 @@ class _SubCategoriesPageWidgetState extends State<SubCategoriesPageWidget> {
           toolbarHeight: 0.0,
         ),
         body: SingleChildScrollView(
-            child: Container(
-              child: Column(
-                children: [
-                  Padding(padding: EdgeInsets.only(top: 20.0)),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        child: Container(
-                          padding: EdgeInsets.only(left: 20.0),
-                          child: Icon(Icons.arrow_back_ios, size: 35.0, color: Color(0xFF098CC3)),
-                        ),
-                        onTap: () {
-                          onRouteCategoriesPage();
-                        },
+            child: Column(
+              children: [
+                Padding(padding: EdgeInsets.only(top: 20.0)),
+                Row(
+                  children: [
+                    GestureDetector(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 20.0),
+                        child: Icon(Icons.arrow_back_ios, size: 35.0, color: Color(0xFF098CC3)),
                       ),
-                      Container(
-                        child: Text(
-                          widget.selectedCategory.categoryName,
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold
-                          ),
+                      onTap: () {
+                        onRouteCategoriesPage();
+                      },
+                    ),
+                    Container(
+                      child: Text(
+                        widget.selectedCategory.categoryName,
+                        style: TextStyle(
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.bold
                         ),
                       ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(left: 55.0, top: 10.0),
-                        child: Text(
-                          "Select other services",
-                          style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.bold
-                          ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(left: 55.0, top: 10.0),
+                      child: Text(
+                        "Select other services",
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold
                         ),
                       ),
-                    ],
-                  ),
-                  subCategories.isNotEmpty ? Row() : Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(left: 55.0, top: 10.0),
+                    ),
+                  ],
+                ),
+                !isShowEmptyError ? Row() : Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.only(top: 20.0),
                         child: Text(
                           "No services for this category",
                           textAlign: TextAlign.center,
@@ -152,57 +158,57 @@ class _SubCategoriesPageWidgetState extends State<SubCategoriesPageWidget> {
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  Column(
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 15.0),
+                      height: MediaQuery.of(context).size.height - 180.0,
+                      child: Scrollbar(
+                        isAlwaysShown: true,
+                        controller: _scrollController,
+                        thickness: 8.0,
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          itemCount: subCategories.length,
+                          itemBuilder: _listViewItemBuilder,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                subCategories.isEmpty ? Center() : Center(
+                  child: Column(
                     children: [
                       Container(
-                        padding: EdgeInsets.only(top: 15.0),
-                        height: MediaQuery.of(context).size.height - 180.0,
-                        child: Scrollbar(
-                          isAlwaysShown: true,
-                          controller: _scrollController,
-                          thickness: 8.0,
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            itemCount: subCategories.length,
-                            itemBuilder: _listViewItemBuilder,
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        margin: EdgeInsets.only(top: 10.0),
+                        child: ElevatedButton(
+                          child: Text(
+                            "Submit",
+                            style: TextStyle(
+                              fontSize: 23.0,
+                              color: Colors.white,
+                            ),
                           ),
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 10.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            primary: Colors.blue.shade600,
+                          ),
+                          onPressed: selectedSubCategories.isEmpty ? null : () {
+                            onPressSubmit();
+                          },
                         ),
                       ),
                     ],
                   ),
-                  subCategories.isEmpty ? Center() : Center(
-                    child: Column(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.6,
-                          margin: EdgeInsets.only(top: 10.0),
-                          child: ElevatedButton(
-                            child: Text(
-                              "Submit",
-                              style: TextStyle(
-                                fontSize: 23.0,
-                                color: Colors.white,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: 10.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              primary: Colors.blue.shade600,
-                            ),
-                            onPressed: selectedSubCategories.isEmpty ? null : () {
-                              onPressSubmit();
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
         ),
     );
@@ -272,10 +278,6 @@ class _SubCategoriesPageWidgetState extends State<SubCategoriesPageWidget> {
     });
   }
 
-  void onRouteCategoriesPage() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CategoriesPage()));
-  }
-
   Future onGetSubCategories() async {
     setState(() {
       isApiCallProcess = true;
@@ -286,6 +288,9 @@ class _SubCategoriesPageWidgetState extends State<SubCategoriesPageWidget> {
         setState(() {
           subCategories = value.data.toList();
           isApiCallProcess = false;
+          if(subCategories.isEmpty) {
+            isShowEmptyError = true;
+          }
         }),
       }
     }).catchError((onError) {
@@ -296,10 +301,16 @@ class _SubCategoriesPageWidgetState extends State<SubCategoriesPageWidget> {
     });
   }
 
+  void onRouteCategoriesPage() {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+        CategoriesPage(isPostAJob: widget.isPostAJob)));
+  }
+
   void onPressSubmit() {
     // print("selectedCategories.length ${selectedSubCategories.length}");
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
         TaskDetailsPage(
+            isPostAJob: widget.isPostAJob,
             selectedCategory: widget.selectedCategory,
             selectedSubCategories: selectedSubCategories,
             taskDetails: widget.taskDetails,
