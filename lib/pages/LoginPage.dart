@@ -254,7 +254,6 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
   }
 
   onPressedSignUpButton() {
-    print("onPressedSignUpButton");
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUpPage()));
   }
 

@@ -61,7 +61,7 @@ class UserAuthService {
       }
     } on SocketException {
       throw Exception("No Internet connection");
-    } on TimeoutException catch (e) {
+    } on TimeoutException {
       throw Exception("Timeout");
     }
   }

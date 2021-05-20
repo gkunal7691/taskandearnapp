@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:task_and_earn/models/Task.dart';
+import '../../models/post_a_job/Task.dart';
+import 'package:task_and_earn/models/become_a_earner/Professional.dart';
 import 'package:toast/toast.dart';
 import '../HomePage.dart';
 import 'CategoriesPage.dart';
 
 // ignore: must_be_immutable
 class JobPostedSuccessPage extends StatelessWidget {
+  final bool isPostAJob;
   TaskRequest taskRequest;
   Task createdTask;
+  ProfessionalRequest professionalRequest;
+  Professional professional;
 
   JobPostedSuccessPage({
     Key key,
+    @required this.isPostAJob,
     @required this.taskRequest,
     @required this.createdTask,
+    @required this.professionalRequest,
+    @required this.professional,
   }) : super(key: key);
 
   @override
@@ -22,8 +29,11 @@ class JobPostedSuccessPage extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Task and Earn",
       home: JobPostedSuccessPageWidget(
+          isPostAJob: isPostAJob,
           taskRequest: taskRequest,
           createdTask: createdTask,
+          professionalRequest: professionalRequest,
+          professional: professional,
       ),
     );
   }
@@ -31,13 +41,19 @@ class JobPostedSuccessPage extends StatelessWidget {
 
 // ignore: must_be_immutable
 class JobPostedSuccessPageWidget extends StatefulWidget {
+  final bool isPostAJob;
   TaskRequest taskRequest;
   Task createdTask;
+  ProfessionalRequest professionalRequest;
+  Professional professional;
 
   JobPostedSuccessPageWidget({
     Key key,
+    @required this.isPostAJob,
     @required this.taskRequest,
     @required this.createdTask,
+    @required this.professionalRequest,
+    @required this.professional,
   }) : super(key: key);
 
   @override
@@ -46,18 +62,52 @@ class JobPostedSuccessPageWidget extends StatefulWidget {
 
 class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget> {
   var createdTaskDate;
+  String createdTaskDesc;
+  String userFirstName;
+  String userLastName;
+  String addressStreet;
+  String addressCity;
+  String addressCountry;
+  String price;
 
   @override
   void initState() {
     super.initState();
-    print("jsp taskRequest ${widget.taskRequest.toJson()}");
-    print("jsp createdTask ${widget.createdTask.toJson()}");
+    print("jsp isPostAJob ${widget.isPostAJob}");
+    // print("jsp taskRequest ${widget.taskRequest.toJson()}");
+    // print("jsp createdTask ${widget.createdTask.toJson()}");
     if(widget.createdTask != null) {
       var strDt = DateTime.parse(widget.createdTask.createdAt);
       createdTaskDate = DateFormat.yMMMMd().format(strDt);
       setState(() {
         createdTaskDate = createdTaskDate;
-        print(createdTaskDate);
+        createdTaskDesc = widget.createdTask.description;
+        print("jsp createdTaskDate1 $createdTaskDate $createdTaskDesc");
+        if(widget.taskRequest != null) {
+          userFirstName = widget.taskRequest.user.firstName;
+          userLastName = widget.taskRequest.user.lastName;
+          addressStreet = widget.taskRequest.address.street;
+          addressCity = widget.taskRequest.address.city;
+          addressCountry = widget.taskRequest.address.country;
+          price = widget.createdTask.price;
+        }
+      });
+    }
+    else if(widget.professional != null) {
+      createdTaskDate = DateFormat.yMMMMd().format(widget.professional.createdAt);
+      setState(() {
+        createdTaskDate = createdTaskDate;
+        createdTaskDesc = widget.professional.introduction;
+        print("jsp createdTaskDate2 $createdTaskDate $createdTaskDesc");
+        price = widget.professional.price.toString();
+        print("jsp price $price");
+        if(widget.professionalRequest != null) {
+          userFirstName = widget.professionalRequest.user.firstName;
+          userLastName = widget.professionalRequest.user.lastName;
+          addressStreet = widget.professionalRequest.address.street;
+          addressCity = widget.professionalRequest.address.city;
+          addressCountry = widget.professionalRequest.address.country;
+        }
       });
     }
   }
@@ -88,7 +138,7 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                   children: [
                     Container(
                       child: Image.asset(
-                        "assets/images/mail_sent.png",
+                        widget.isPostAJob ? "assets/images/mail_sent.png" : "assets/images/undraw_profile.png",
                         width: MediaQuery.of(context).size.width * 0.35,
                         fit: BoxFit.cover,
                       ),
@@ -96,7 +146,7 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                     Padding(
                       padding: EdgeInsets.only(top: 15.0),
                       child: Text(
-                        "Job posted successfully",
+                        widget.isPostAJob ? "Job posted successfully" : "Profile created successfully",
                         style: TextStyle(
                           fontSize: 22.0,
                           fontWeight: FontWeight.bold,
@@ -112,7 +162,7 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
             Container(
               padding: EdgeInsets.only(left: 20.0, top: 15.0),
               child: Text(
-                "You posted",
+                widget.isPostAJob ? "You posted" : "Your profile",
                 style: TextStyle(
                   fontSize: 22.0,
                   fontWeight: FontWeight.bold,
@@ -131,7 +181,7 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.createdTask.title,
+                          widget.createdTask != null ? widget.createdTask.title : widget.professional.title,
                           style: TextStyle(
                             fontSize: 18.0,
                             color: Color(0xFF098CC3),
@@ -149,14 +199,14 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                             ),
                             Padding(padding: EdgeInsets.only(left: 10.0)),
                             Text(
-                              widget.taskRequest.user.firstName,
+                              userFirstName,
                               style: TextStyle(
                                 fontSize: 18.0,
                               ),
                             ),
                             Padding(padding: EdgeInsets.only(left: 3.0)),
                             Text(
-                              widget.taskRequest.user.lastName,
+                              userLastName,
                               style: TextStyle(
                                 fontSize: 18.0,
                               ),
@@ -174,7 +224,7 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                             ),
                             Padding(padding: EdgeInsets.only(left: 10.0)),
                             Text(
-                              widget.taskRequest.address.street,
+                              addressStreet,
                               style: TextStyle(
                                 fontSize: 18.0,
                               ),
@@ -187,11 +237,22 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              child: Text(
-                                "City: " + widget.taskRequest.address.city,
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "City:",
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.only(left: 3.0)),
+                                  Text(
+                                    addressCity,
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             Container(
@@ -220,11 +281,22 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              child: Text(
-                                "Country: " + widget.taskRequest.address.country,
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Country:",
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.only(left: 3.0)),
+                                  Text(
+                                    addressCountry,
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             Container(
@@ -238,7 +310,7 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 3.0)),
                                   Text(
-                                    widget.createdTask.price,
+                                    price,
                                     style: TextStyle(
                                       fontSize: 18.0,
                                     ),
@@ -251,7 +323,7 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
 
                         Padding(padding: EdgeInsets.only(top: 10.0)),
                         Text(
-                          "Task Description:   " + widget.createdTask.description,
+                          "Task Description:   " + createdTaskDesc,
                           style: TextStyle(
                             fontSize: 18.0,
                           ),
@@ -287,7 +359,7 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                   },
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -304,11 +376,13 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
         }
         else if(index == 1) {
           onShowToast("Redirected to Post a Job", 2);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CategoriesPage()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+              CategoriesPage(isPostAJob: true)));
         }
         else if(index == 2) {
-          onShowToast("This feature is under process", 2);
-          // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+          onShowToast("Redirected to Become a Learner", 2);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+              CategoriesPage(isPostAJob: false)));
         }
       },
       elevation: 30.0,

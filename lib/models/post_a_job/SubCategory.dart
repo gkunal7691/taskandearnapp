@@ -1,4 +1,4 @@
-import 'package:task_and_earn/models/Category.dart';
+import 'Category.dart';
 
 class SubCategoryResponse {
   final bool success;

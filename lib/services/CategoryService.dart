@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:task_and_earn/models/Category.dart';
-import 'package:task_and_earn/models/PostAJob.dart';
-import 'package:task_and_earn/models/SubCategory.dart';
-import 'package:task_and_earn/models/Task.dart';
 import 'ApiManager.dart';
+import '../models/post_a_job/Category.dart';
+import '../models/post_a_job/PostAJob.dart';
+import '../models/post_a_job/SubCategory.dart';
+import '../models/post_a_job/Task.dart';
 
 class CategoryService {
   Future<CategoryResponse> onGetCategories(String token) async {
@@ -15,7 +15,7 @@ class CategoryService {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
       };
-      print("ApiManager.baseUrl ${ApiManager.baseUrl}");
+      // print("ApiManager.baseUrl ${ApiManager.baseUrl}");
       final response =
       await http.get(Uri.parse(ApiManager.baseUrl + "category"), headers: headers);
 
@@ -26,7 +26,7 @@ class CategoryService {
       }
     } on SocketException {
       throw Exception("No Internet connection");
-    } on TimeoutException catch (e) {
+    } on TimeoutException {
       throw Exception("Timeout");
     }
   }
@@ -46,7 +46,7 @@ class CategoryService {
       }
     } on SocketException {
       throw Exception("No Internet connection");
-    } on TimeoutException catch (e) {
+    } on TimeoutException {
       throw Exception("Timeout");
     }
   }
@@ -56,9 +56,9 @@ class CategoryService {
     try {
       var headers = {'Content-type': 'application/json'};
       var bodyData = json.encode(taskRequest.toJson());
-      // print("cs onPostAJob bodyData $bodyData");
+      print("cs onPostAJob bodyData $bodyData");
       final response = await http.post(Uri.parse(ApiManager.baseUrl + "task"), headers: headers, body: bodyData);
-      // print("cs response ${response.body}");
+      print("cs response ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 400) {
         return PostAJobResponse.fromJson(json.decode(response.body));
@@ -67,10 +67,10 @@ class CategoryService {
       }
     } on SocketException {
       throw Exception("No Internet connection");
-    } on TimeoutException catch (e) {
+    } on TimeoutException {
       throw Exception("Timeout");
     } catch(e) {
-      throw Exception("cs Exception $e");
+      throw Exception("ps Exception $e");
     }
   }
 }

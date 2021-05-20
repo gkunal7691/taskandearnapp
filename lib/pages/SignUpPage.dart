@@ -165,14 +165,6 @@ class _SignUpPageWidgetSate extends State<SignUpPageWidget> {
                           onSaved: (input) => {
                             signUpRequestModel.firstName = input,
                           },
-                          // onChanged: (input) {
-                          //   print("sp onChanged fn input: " + input);
-                          //   if(input.isEmpty){
-                          //     return "First Name cannot be blank";
-                          //   } else {
-                          //     return null;
-                          //   }
-                          // },
                           validator: (value) {
                             if (value.isEmpty) {
                               return "First Name cannot be blank";

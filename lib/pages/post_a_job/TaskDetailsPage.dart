@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:task_and_earn/models/Category.dart';
+import '../../models/post_a_job/Category.dart';
 import 'SubCategoriesPage.dart';
 import 'TaskAddressPage.dart';
 
 // ignore: must_be_immutable
 class TaskDetailsPage extends StatelessWidget {
+  final bool isPostAJob;
   Category selectedCategory;
   List<int> selectedSubCategories;
   TaskDetails taskDetails;
@@ -12,6 +13,7 @@ class TaskDetailsPage extends StatelessWidget {
 
   TaskDetailsPage({
     Key key,
+    @required this.isPostAJob,
     @required this.selectedCategory,
     @required this.selectedSubCategories,
     @required this.taskDetails,
@@ -24,6 +26,7 @@ class TaskDetailsPage extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Task and Earn",
       home: TaskDetailsPageWidget(
+        isPostAJob: isPostAJob,
         selectedCategory: selectedCategory,
         selectedSubCategories: selectedSubCategories,
         taskDetails: taskDetails,
@@ -35,6 +38,7 @@ class TaskDetailsPage extends StatelessWidget {
 
 // ignore: must_be_immutable
 class TaskDetailsPageWidget extends StatefulWidget {
+  final bool isPostAJob;
   Category selectedCategory;
   List<int> selectedSubCategories;
   TaskDetails taskDetails;
@@ -42,6 +46,7 @@ class TaskDetailsPageWidget extends StatefulWidget {
 
   TaskDetailsPageWidget({
     Key key,
+    @required this.isPostAJob,
     @required this.selectedCategory,
     @required this.selectedSubCategories,
     @required this.taskDetails,
@@ -80,6 +85,7 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
     super.dispose();
     taskTitleController.dispose();
     taskDescController.dispose();
+    taskPriceController.dispose();
   }
 
   @override
@@ -89,7 +95,6 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
           toolbarHeight: 0.0,
         ),
         body: SingleChildScrollView(
-          child: Container(
             child: Column(
               children: [
                 Padding(padding: EdgeInsets.only(top: 20.0)),
@@ -205,7 +210,7 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
                                   Padding(
                                     padding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 5.0),
                                     child: Text(
-                                      'Task Description',
+                                      "Task Description",
                                       style: TextStyle(
                                         fontSize: 17.0,
                                         fontWeight: FontWeight.bold,
@@ -340,19 +345,8 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
                 ),
               ],
             ),
-          ),
         ),
     );
-  }
-
-  void onRouteSubCategoriesPage() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-        SubCategoriesPage(
-            selectedCategory: widget.selectedCategory,
-            selectedSubCategories: widget.selectedSubCategories,
-            taskDetails: taskDetails != null ? taskDetails : widget.taskDetails,
-            address: widget.address,
-        )));
   }
 
   void onSubmitTaskDetails() {
@@ -363,13 +357,25 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
     }
   }
 
+  void onRouteSubCategoriesPage() {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+        SubCategoriesPage(
+          isPostAJob: widget.isPostAJob,
+          selectedCategory: widget.selectedCategory,
+          selectedSubCategories: widget.selectedSubCategories,
+          taskDetails: taskDetails != null ? taskDetails : widget.taskDetails,
+          address: widget.address,
+        )));
+  }
+
   void onRouteTaskAddressPage() {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
         TaskAddressPage(
+            isPostAJob: widget.isPostAJob,
             selectedCategory: widget.selectedCategory,
             selectedSubCategories: widget.selectedSubCategories,
             taskDetails: taskDetails != null ? taskDetails : widget.taskDetails,
-            address: widget.address,
+            address: widget.address, about: null,
         )));
   }
 }
