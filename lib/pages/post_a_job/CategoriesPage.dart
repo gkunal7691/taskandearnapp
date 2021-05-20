@@ -169,7 +169,6 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
         onPressed: () {
           onPressGoUp();
         },
-        // backgroundColor: Color(0x098CC3),
       ),
     );
   }
@@ -224,7 +223,6 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
       isApiCallProcess = true;
     });
     await categoryService.onGetCategories(token).then((res) => {
-      // print("cp ${value.toJson()}"),
       if(res.success) {
         setState(() {
           categories = res.data.toList();

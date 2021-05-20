@@ -1,5 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:task_and_earn/Util/SharedPref.dart';
+import 'package:task_and_earn/models/PopularService.dart';
+import 'package:task_and_earn/services/CategoryService.dart';
+import 'ProgressHUD.dart';
 import 'post_a_job/CategoriesPage.dart';
 import 'package:task_and_earn/pages/LoginPage.dart';
 import 'package:toast/toast.dart';
@@ -27,32 +31,50 @@ class HomePageWidget extends StatefulWidget {
 }
 
 class _HomePageWidgetState extends State<HomePageWidget> {
+  CategoryService categoryService = new CategoryService();
   SharedPref sharedPref = new SharedPref();
+  bool isApiCallProcess = false;
   String token;
   String appVersion = "";
   dynamic loggedInUserId;
   String loggedInUserFName;
   String loggedInUserLName;
+
+  List<PopularService> popularServices = [];
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  ScrollController _scrollController;
+
+  _scrollListener() {
+    print("listening");
+
+  }
 
   @override
   void initState() {
-    onGetToken();
     super.initState();
+    _scrollController = new ScrollController();
+    // _scrollController.addListener(_scrollListener);
+    onGetToken();
   }
 
   @override
   void dispose() {
     super.dispose();
+    _scrollController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    return ProgressHUD(
+        child: _uiSetUp(context), isAsyncCall: isApiCallProcess, opacity: 0.5);
+  }
+
+  Widget _uiSetUp(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       drawer: _drawer(context),
       body: SingleChildScrollView(
-        padding: EdgeInsets.only(top: 20.0),
+        padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
         child: Column(
           children: [
             Row(
@@ -174,10 +196,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 ),
               ],
             ),
-            Padding(padding: EdgeInsets.only(top: 20.0)),
+
+            Padding(padding: EdgeInsets.only(top: 10.0)),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Padding(padding: EdgeInsets.only(left: 20.0)),
                 Text(
                   "Popular Services",
                   style: TextStyle(
@@ -188,6 +211,48 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 ),
               ],
             ),
+
+            Container(
+              height: MediaQuery.of(context).size.width * 0.58,
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.only(top: 10.0),
+              child: ListView.builder(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                itemCount: popularServices.length,
+                itemBuilder: _servicesItemBuilder,
+              ),
+            ),
+
+            Padding(padding: EdgeInsets.only(top: 10.0)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 20.0),
+                  child: Text(
+                    "Recent Tasks",
+                    style: TextStyle(
+                      fontSize: 22.0,
+                      color: Color(0xFF098CC3),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(right: 20.0),
+                  child: Text(
+                    "see all",
+                    style: TextStyle(
+                      fontSize: 19.0,
+                      color: Color(0xFF098CC3),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
           ],
         ),
       ),
@@ -347,7 +412,61 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     );
   }
 
+  Widget _servicesItemBuilder(BuildContext context, int index) {
+    var popService = this.popularServices[index];
+    if(_scrollController.offset == _scrollController.position.minScrollExtent) {
+      _scrollController.animateTo(
+          MediaQuery.of(context).size.width * 0.47,
+          duration: Duration(milliseconds: 300), curve: Curves.linear);
+    } else {
+      _scrollController.position.restoreOffset(_scrollController.offset);
+    }
+    return _itemBuilder(popService);
+  }
+
+  Widget _itemBuilder(PopularService popService) {
+    return GestureDetector(
+      child: Card(
+        elevation: 3.0,
+        margin: EdgeInsets.only(right: 15.0, bottom: 10.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image.network(
+                popService.imagePath,
+                fit: BoxFit.fill,
+                height: MediaQuery.of(context).size.width * 0.40,
+                width: MediaQuery.of(context).size.width * 0.62,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
+              child: Text(
+                popService.popularServiceName,
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Color(0xFF098CC3),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      onTap: () {
+        print(popService.popularServiceId);
+      },
+    );
+  }
+
   Future onGetToken() async {
+    setState(() {
+      isApiCallProcess = true;
+    });
     token = await sharedPref.onGetSharedPreferencesValue("tokenKey");
     loggedInUserId = await sharedPref.onGetSharedPreferencesValue("loggedInUserId");
     loggedInUserFName = await sharedPref.onGetSharedPreferencesValue("loggedInUserFName");
@@ -360,6 +479,32 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       loggedInUserLName = loggedInUserLName;
       appVersion = appVersion;
     });
+
+    if(token != null) {
+      await onGetPopularServices();
+    } else {
+      setState(() {
+        isApiCallProcess = false;
+      });
+    }
+  }
+
+  Future onGetPopularServices() async {
+    await categoryService.getPopularServices(token).then((res) => {
+      // print("hp res.data ${res.data}"),
+      if(res.success) {
+        setState(() {
+          popularServices = res.data.toList();
+          print("hp popularServices ${popularServices.length}");
+          isApiCallProcess = false;
+        }),
+      }
+    }).catchError((e) {
+      setState(() {
+        isApiCallProcess = false;
+      });
+      onShowToast("$e", 3);
+    });
   }
 
   Future onLogout() async {
@@ -369,12 +514,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
-  void onShowToast(String msg, int timeInSec) {
-    Toast.show(msg, context, duration: timeInSec, gravity:  Toast.BOTTOM);
-  }
-
   void onRouteToCategory(bool isPostAJob) {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
         CategoriesPage(isPostAJob: isPostAJob)));
+  }
+
+  void onShowToast(String msg, int timeInSec) {
+    Toast.show(msg, context, duration: timeInSec, gravity:  Toast.BOTTOM);
   }
 }
