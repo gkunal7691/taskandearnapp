@@ -5,12 +5,12 @@ class Task {
   int taskId;
   int addressId;
   String categoryId;
-  dynamic createdAt;
   String description;
   String price;
   String title;
-  dynamic updatedAt;
   int userId;
+  dynamic createdAt;
+  dynamic updatedAt;
 
   Task({
     this.taskId,

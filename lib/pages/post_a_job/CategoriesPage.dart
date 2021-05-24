@@ -109,6 +109,7 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
                   ),
                 ],
               ),
+
               Padding(padding: EdgeInsets.only(top: 15.0)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

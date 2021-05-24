@@ -31,6 +31,8 @@ class Professional {
   final String title;
   final DateTime createdAt;
   final DateTime updatedAt;
+  Address address;
+  Category category;
 
   Professional({
     this.proId,
@@ -45,12 +47,13 @@ class Professional {
     this.title,
     this.createdAt,
     this.updatedAt,
+    this.address,
+    this.category,
   });
 
   factory Professional.fromJson(Map<String, dynamic> json) => Professional(
     addressId: json["addressId"],
     categoryId: json["categoryId"],
-    createdAt: DateTime.parse(json["createdAt"]),
     dob: json["dob"],
     gender: json["gender"],
     introduction: json["introduction"],
@@ -59,7 +62,10 @@ class Professional {
     proId: json["proId"],
     skills: json["skills"],
     title: json["title"],
+    createdAt: DateTime.parse(json["createdAt"]),
     updatedAt: DateTime.parse(json["updatedAt"]),
+    address: Address.fromJson(json["address"]),
+    category: Category.fromJson(json["category"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -75,6 +81,8 @@ class Professional {
     "title": title,
     "createdAt": createdAt,
     "updatedAt": updatedAt,
+    "address": address != null ? address.toJson() : null,
+    "category": category != null ? category.toJson() : null,
   };
 }
 
@@ -135,4 +143,55 @@ class ProfessionalRequest {
     };
     return map;
   }
+}
+
+// Todo All Professionals Response.
+
+class TopProfessionalsResponse {
+  final bool success;
+  List<TopProfessional> data;
+
+  TopProfessionalsResponse({this.success, this.data});
+
+  factory TopProfessionalsResponse.fromJson(Map<String, dynamic> json) => TopProfessionalsResponse(
+    data: List<TopProfessional>.from(json["data"].map((x) => TopProfessional.fromJson(x))),
+    success: json["success"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "data": data != null ? List<dynamic>.from(data.map((x) => x.toJson())) : null,
+    "success": success,
+  };
+}
+
+class TopProfessional {
+  TopProfessional({
+    this.proId,
+    this.firstName,
+    this.lastName,
+    this.userId,
+    this.professional,
+  });
+
+  int proId;
+  String firstName;
+  String lastName;
+  int userId;
+  Professional professional;
+
+  factory TopProfessional.fromJson(Map<String, dynamic> json) => TopProfessional(
+    proId: json["proId"],
+    firstName: json["firstName"],
+    lastName: json["lastName"],
+    userId: json["userId"],
+    professional: Professional.fromJson(json["professional"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "proId": proId,
+    "firstName": firstName,
+    "lastName": lastName,
+    "userId": userId,
+    "professional": professional.toJson(),
+  };
 }

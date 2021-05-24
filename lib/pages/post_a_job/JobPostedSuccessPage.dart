@@ -82,7 +82,6 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
       setState(() {
         createdTaskDate = createdTaskDate;
         createdTaskDesc = widget.createdTask.description;
-        print("jsp createdTaskDate1 $createdTaskDate $createdTaskDesc");
         if(widget.taskRequest != null) {
           userFirstName = widget.taskRequest.user.firstName;
           userLastName = widget.taskRequest.user.lastName;
@@ -98,9 +97,8 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
       setState(() {
         createdTaskDate = createdTaskDate;
         createdTaskDesc = widget.professional.introduction;
-        print("jsp createdTaskDate2 $createdTaskDate $createdTaskDesc");
         price = widget.professional.price.toString();
-        print("jsp price $price");
+        // print("jsp price $price");
         if(widget.professionalRequest != null) {
           userFirstName = widget.professionalRequest.user.firstName;
           userLastName = widget.professionalRequest.user.lastName;

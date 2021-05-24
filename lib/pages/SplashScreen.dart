@@ -10,7 +10,7 @@ import 'LoginPage.dart';
 class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return new MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Task and Earn",
       home: Scaffold(
@@ -37,11 +37,7 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      isApiCallProcess = true;
-    });
     onGetAppVersion();
-    // appVersion = "0.0.4";
     onCheckLastLogin();
   }
 
@@ -57,9 +53,13 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            child: Image.asset("assets/images/app_logo.png", height: 300),
+            child: Image.asset(
+              "assets/icon/app_icon.png",
+              height: 300,
+              color: Colors.black,
+            ),
           ),
-          Padding(padding: EdgeInsets.only(top: 20.0)),
+          // Padding(padding: EdgeInsets.only(top: 20.0)),
           Text(
             'Task and Earn',
             style: TextStyle(
@@ -88,6 +88,9 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
 
   onCheckLastLogin() async {
     print("sp onCheckLastLogin");
+    setState(() => {
+      isApiCallProcess = false,
+    });
     token = await sharedPref.onGetSharedPreferencesValue("tokenKey");
     print("sp token: $token");
     if(token != null) {
@@ -118,7 +121,6 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
           onRoute(),
         }
       }).catchError((e) {
-        // print("sp catchError $e");
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("$e", textAlign: TextAlign.center)));
         token = null;
@@ -140,7 +142,7 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
   }
 
   startTimer() async {
-    var duration = Duration(seconds: 1);
+    var duration = Duration(seconds: 2);
     return Timer(duration, onRoute);
   }
 
