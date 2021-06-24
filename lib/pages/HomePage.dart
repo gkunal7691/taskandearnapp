@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:task_and_earn/Util/SharedPref.dart';
 import 'package:task_and_earn/models/PopularService.dart';
 import 'package:task_and_earn/models/Task_Model.dart';
-import 'package:task_and_earn/models/become_a_earner/Professional.dart';
 import 'package:task_and_earn/services/CategoryService.dart';
 import 'package:task_and_earn/services/ProfessionalService.dart';
+import 'package:task_and_earn/util/Variables.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'ProgressHUD.dart';
 import 'basic/AllTasks.dart';
 import 'post_a_job/CategoriesPage.dart';
@@ -22,6 +22,9 @@ class HomePage extends StatelessWidget {
     return new MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Task and Earn",
+      theme: ThemeData(
+        fontFamily: 'Poppins',
+      ),
       home: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0.0,
@@ -54,7 +57,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   ScrollController _taskScrollController = new ScrollController();
   List<Task> recentTasks = [];
   ScrollController _topProfScrollController = new ScrollController();
-  List<TopProfessional> topProfessionals = [];
 
   @override
   void initState() {
@@ -83,7 +85,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       key: _scaffoldKey,
       drawer: _drawer(context),
       body: SingleChildScrollView(
-        padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+        padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
         child: Column(
           children: [
             Row(
@@ -93,8 +95,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     padding: EdgeInsets.only(left: 15.0),
                     child: Icon(
                         Icons.menu,
-                        size: 40.0,
-                        color: Color(0xFF098CC3)
+                        size: Variables.headerMenuSize.sp,
+                        color: Color(0xFF098CC3),
                     ),
                   ),
                   onTap: () {
@@ -105,14 +107,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   padding: EdgeInsets.only(left: 10.0),
                   child: Text(
                     "Hi " + loggedInUserFName.capitalize(),
-                    style:
-                        TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: Variables.headerTextSize.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.only(left: 15.0),
                   child: Image.asset(
                     "assets/images/hello.png",
+                    height: Variables.headerMenuSizeS.sp,
                   ),
                 ),
               ],
@@ -123,13 +128,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   padding: EdgeInsets.only(left: 20.0),
                   child: Text(
                     "Earn anytime anywhere for what you do Best.",
-                    style:
-                        TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: Variables.headerSubTextSize.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
             ),
-            Padding(padding: EdgeInsets.only(top: 15.0)),
+
+            Padding(padding: EdgeInsets.only(top: 10.0)),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -158,7 +166,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             "Post a Job",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 20.0,
+                              fontSize: Variables.cardTextSizeM.sp,
                               color: Color(0xFF098CC3),
                               fontWeight: FontWeight.bold,
                             ),
@@ -172,7 +180,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 Padding(padding: EdgeInsets.only(right: 20.0)),
                 GestureDetector(
                   onTap: () {
-                    onRouteToCategory(false);
+                    _launchURL("https://taskandearn-dev.herokuapp.com/become-earner-login");
                   },
                   child: Container(
                     width: 140,
@@ -193,9 +201,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             "Become a Earner",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 20.0,
+                              fontSize: Variables.cardTextSizeM.sp,
                               color: Color(0xff858585),
                               fontWeight: FontWeight.bold,
+                              height: 1.2.sp,
                             ),
                           ),
                         ],
@@ -206,15 +215,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               ],
             ),
 
-            Padding(padding: EdgeInsets.only(top: 10.0)),
+            Padding(padding: EdgeInsets.only(top: 5.0)),
             Row(
               children: [
                 Padding(padding: EdgeInsets.only(left: 20.0)),
                 Text(
                   "Popular Services",
                   style: TextStyle(
-                    // fontSize: 22.0,
-                    fontSize: 22.sp,
+                    fontSize: Variables.textSizeM.sp,
                     color: Color(0xFF098CC3),
                     fontWeight: FontWeight.bold,
                   ),
@@ -223,9 +231,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             ),
 
             Container(
-              height: MediaQuery.of(context).size.width * 0.58,
+              height: Variables.serviceCardH.h,
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(top: 10.0),
+              padding: EdgeInsets.only(top: 5.0),
               child: ListView.builder(
                 controller: _serviceScrollController,
                 scrollDirection: Axis.horizontal,
@@ -234,7 +242,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               ),
             ),
 
-            Padding(padding: EdgeInsets.only(top: 10.0)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -243,7 +250,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   child: Text(
                     "Recent Tasks",
                     style: TextStyle(
-                      fontSize: 22.0,
+                      fontSize: Variables.textSizeM.sp,
                       color: Color(0xFF098CC3),
                       fontWeight: FontWeight.bold,
                     ),
@@ -257,11 +264,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     },
                     child: Text(
                       "see all",
-                        style: TextStyle(
-                          fontSize: 19.0,
-                          color: Color(0xFF098CC3),
-                          fontWeight: FontWeight.bold,
-                        ),
+                      style: TextStyle(
+                        fontSize: Variables.textSizeS.sp,
+                        color: Color(0xFF098CC3),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -269,57 +276,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             ),
 
             Container(
-              height: MediaQuery.of(context).size.width * 0.59,
+              height: Variables.recentTaskCardH.h,
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(top: 10.0),
+              padding: EdgeInsets.only(top: 0.0),
               child: ListView.builder(
                 controller: _taskScrollController,
                 scrollDirection: Axis.horizontal,
-                itemCount: popularServices.length,
+                itemCount: recentTasks.length,
                 itemBuilder: _taskItemBuilder,
               ),
-            ),
-
-            Padding(padding: EdgeInsets.only(top: 10.0)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 20.0),
-                  child: Text(
-                    "Top Professionals",
-                    style: TextStyle(
-                      fontSize: 22.0,
-                      color: Color(0xFF098CC3),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 20.0),
-                  child: Text(
-                    "see all",
-                    style: TextStyle(
-                      fontSize: 19.0,
-                      color: Color(0xFF098CC3),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            Container(
-              height: MediaQuery.of(context).size.width * 0.68,
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(top: 10.0),
-              child: ListView.builder(
-                controller: _topProfScrollController,
-                scrollDirection: Axis.horizontal,
-                itemCount: topProfessionals.length,
-                itemBuilder: _topProfItemBuilder,
-              ),
-            ),
+            )
           ],
         ),
       ),
@@ -490,7 +456,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       width: MediaQuery.of(context).size.width * 0.66,
       child: Card(
           elevation: 3.0,
-          margin: EdgeInsets.only(right: 15.0, bottom: 10.0),
+          margin: EdgeInsets.only(right: 15.0, bottom: 3.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -506,13 +472,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
+                padding: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
                 child: Text(
                   popService.popularServiceName,
                   style: TextStyle(
-                    fontSize: 18.0,
-                    color: Color(0xFF098CC3),
-                    fontWeight: FontWeight.bold,
+                    fontSize: Variables.cardTextSizeS.sp,
                   ),
                 ),
               ),
@@ -543,7 +507,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       width: MediaQuery.of(context).size.width * 0.66,
       child: Card(
         elevation: 3.0,
-        margin: EdgeInsets.only(right: 15.0, bottom: 10.0),
+        margin: EdgeInsets.only(right: 15.0, bottom: 5.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -559,13 +523,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     child: Icon(
                       Icons.watch_later_rounded,
                       color: Colors.black54,
-                      size: 20.0,
+                      size: Variables.textSizeS.sp,
                     ),
                   ),
                   Text(
                     Jiffy(DateTime(task.createdAt.year, task.createdAt.month, task.createdAt.day)).format("do MMMM, yyyy"),
                     style: TextStyle(
-                      fontSize: 16.0,
+                      fontSize: Variables.textSizeNormal.sp,
                       color: Colors.black54,
                     ),
                   ),
@@ -580,7 +544,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     child: Icon(
                       Icons.screen_search_desktop,
                       color: Colors.black54,
-                      size: 18.0,
+                      size: Variables.textSizeS.sp,
                     ),
                   ),
                   Flexible(
@@ -588,7 +552,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       task.title,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: Variables.textSizeXs.sp,
                         color: Color(0xFF098CC3),
                         fontWeight: FontWeight.w600,
                       ),
@@ -605,7 +569,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     child: Icon(
                       Icons.person,
                       color: Colors.black54,
-                      size: 22.0,
+                      size: Variables.textSizeM.sp,
                     ),
                   ),
                   Flexible(
@@ -613,9 +577,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       task.user != null ? task.user.firstName + " " + task.user.lastName : "N/A",
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 14.0,
+                        fontSize: Variables.textSizeNormal.sp,
                         color: Colors.black54,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -630,7 +593,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     child: Icon(
                       Icons.location_pin,
                       color: Colors.black54,
-                      size: 22.0,
+                      size: Variables.textSizeS.sp,
                     ),
                   ),
                   Flexible(
@@ -638,16 +601,15 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       task.address != null ? task.address.street : "N/A",
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 14.0,
+                        fontSize: Variables.textSizeNormal.sp,
                         color: Colors.black54,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                 ],
               ),
 
-              Padding(padding: EdgeInsets.only(top: 8.0)),
+              Padding(padding: EdgeInsets.only(top: 2.0)),
               Row(
                 children: [
                   Padding(
@@ -655,7 +617,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     child: Text(
                       "City:",
                       style: TextStyle(
-                        fontSize: 14.0,
+                        fontSize: Variables.textSizeNormal.sp,
                         color: Colors.black54,
                         fontWeight: FontWeight.bold,
                       ),
@@ -666,22 +628,22 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       task.address != null ? task.address.city : "N/A",
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 14.0,
+                        fontSize: Variables.textSizeNormal.sp,
                         color: Colors.black54,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                 ],
               ),
 
-              Padding(padding: EdgeInsets.only(top: 8.0)),
+              Padding(padding: EdgeInsets.only(top: 2.0)),
               Row(
                 children: [
                   Text(
                     "Country: ",
-                    style: GoogleFonts.poppins(
-                      color: Colors.black45,
+                    style: TextStyle(
+                      fontSize: Variables.textSizeNormal.sp,
+                      color: Colors.black54,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -690,156 +652,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       task.address != null ? task.address.country : "N/A",
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 14.0,
+                        fontSize: Variables.textSizeNormal.sp,
                         color: Colors.black54,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                   Text(
                     "\u{20B9}" + task.price.toString(),
                     style: TextStyle(
+                      fontSize: Variables.textSizeNormal.sp,
                       color: Colors.black54,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-
-              Center(
-                child: Container(
-                  height: 30.0,
-                  margin: EdgeInsets.only(top: 13.0),
-                  child: ElevatedButton(
-                    child: Text(
-                      "Become a Earner",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                      ),
-                      primary: Colors.blue.shade600,
-                    ),
-                    onPressed: () {
-                      onRouteToCategory(false);
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _topProfItemBuilder(BuildContext context, int index) {
-    if(topProfessionals.length != 0) {
-      var topProfessional = this.topProfessionals[index];
-      if(_topProfScrollController.offset == _topProfScrollController.position.minScrollExtent) {
-        _topProfScrollController.animateTo(
-            MediaQuery.of(context).size.width * 0.23,
-            duration: Duration(milliseconds: 300), curve: Curves.linear);
-      } else {
-        _topProfScrollController.position.restoreOffset(_topProfScrollController.offset);
-      }
-      return _topProfItemUiBuilder(topProfessional);
-    } else {
-      return Container();
-    }
-  }
-
-  Widget imgWidget(TopProfessional topProf) {
-    var img = "";
-    if(topProf.professional.proId == 35) {
-      img = "https://taskandearn.com/assets/image/user.PNG";
-    }
-    else if(topProf.professional.proId == 36) {
-      img = "https://taskandearn.com/assets/image/top-2.jpeg";
-    }
-    else if(topProf.professional.proId == 37) {
-      img = "https://taskandearn.com/assets/image/top.png";
-    }
-    else if(topProf.professional.proId == 38) {
-      img = "https://taskandearn.com/assets/image/top-3 - Copy.jpeg";
-    }
-    else if(topProf.professional.proId == 41) {
-      img = "https://taskandearn.com/assets/image/top1.jpeg";
-    }
-
-    if(img.isNotEmpty) {
-      return CircleAvatar(
-        backgroundImage: NetworkImage(img),
-        minRadius: 50.0,
-        maxRadius: 50.0,
-      );
-    }
-    else {
-      return Icon(
-        Icons.person,
-        color: Colors.black,
-        size: 100.0,
-      );
-    }
-  }
-
-  Widget _topProfItemUiBuilder(TopProfessional topProf) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.50,
-      child: Card(
-        elevation: 3.0,
-        margin: EdgeInsets.only(right: 15.0, bottom: 10.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child:  Center(
-          child: Column(
-            children: [
-              Padding(padding: EdgeInsets.only(top: 10.0)),
-              imgWidget(topProf),
-
-              Padding(padding: EdgeInsets.only(top: 8.0)),
-              Text(
-                topProf.firstName,
-                style: TextStyle(
-                  fontSize: 17.0,
-                  color: Color(0xFF098CC3),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              Padding(
-                padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
-                child: Text(
-                  topProf.professional.category.categoryName,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 17.0,
-                      color: Colors.black45,
-                      fontWeight: FontWeight.w500,
-                      // overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-
-              Padding(padding: EdgeInsets.only(top: 5.0)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.location_pin,
-                    color: Colors.black45,
-                    size: 20.0,
-                  ),
-                  Text(
-                    topProf.professional.address.city,
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      color: Colors.black45,
-                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -849,26 +671,24 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
-                    height: 30.0,
-                    margin: EdgeInsets.only(bottom: 8.0),
+                    height: 25.0,
                     child: ElevatedButton(
                       child: Text(
-                        "View Profile",
+                        "Become a Earner",
                         style: TextStyle(
-                          // fontSize: 23.0,
+                          fontSize: Variables.textSizeNormal.sp,
                           color: Colors.white,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 30.0),
+                        padding: EdgeInsets.symmetric(horizontal: 20.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
                         ),
                         primary: Colors.blue.shade600,
                       ),
                       onPressed: () {
-                        // onTapContinue();
-                        onShowToast("Feature under process", 2);
+                        _launchURL("https://taskandearn-dev.herokuapp.com/become-earner-login");
                       },
                     ),
                   ),
@@ -901,7 +721,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     if(token != null) {
       await onGetPopularServices();
       await onGetTasks();
-      await onGetTopProfessionals();
     } else {
       setState(() {
         isApiCallProcess = false;
@@ -936,27 +755,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         setState(() {
           recentTasks = res.data.toList();
           print("hp recentTasks len ${recentTasks.length}");
-          // print("hp recentTasks ${recentTasks.elementAt(1).toJson()}");
-          isApiCallProcess = false;
-        }),
-      }
-    }).catchError((e) {
-      setState(() {
-        isApiCallProcess = false;
-      });
-      print(e);
-    });
-  }
-
-  Future onGetTopProfessionals() async {
-    setState(() {
-      isApiCallProcess = true;
-    });
-    await professionalService.getTopProfessionals(token).then((res) => {
-      if(res.success) {
-        setState(() {
-          topProfessionals = res.data.toList();
-          print("hp topProfessionals len ${topProfessionals.length}");
           isApiCallProcess = false;
         }),
       }
@@ -978,6 +776,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   void onRouteToCategory(bool isPostAJob) {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
         CategoriesPage(isPostAJob: isPostAJob)));
+  }
+
+  void _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      onShowToast("Could not launch $url", 2);
+    }
   }
 
   void onRouteAllTasks() {

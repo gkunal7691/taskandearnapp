@@ -102,10 +102,10 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
       print("tap address ${widget.address.toJson()}");
       setState(() {
         address = widget.address;
-        streetController.text = widget.address.street;
-        cityController.text = widget.address.city;
-        pinCodeController.text = widget.address.pincode;
-        countryController.text = widget.address.country;
+        // streetController.text = widget.address.street;
+        // cityController.text = widget.address.city;
+        // pinCodeController.text = widget.address.pincode;
+        // countryController.text = widget.address.country;
       });
     }
     if(widget.about != null) {
@@ -211,7 +211,7 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                           ),
                                           onSaved: (input) {
                                             setState(() {
-                                              address.street = input;
+                                              // address.street = input;
                                             });
                                           },
                                           validator: (value) {
@@ -269,7 +269,7 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                           ),
                                           onSaved: (input) {
                                             setState(() {
-                                              address.city = input;
+                                              // address.city = input;
                                             });
                                           },
                                           validator: (value) {
@@ -327,7 +327,7 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                           ),
                                           onSaved: (input) {
                                             setState(() {
-                                              address.pincode = input;
+                                              // address.pincode = input;
                                             });
                                           },
                                           validator: (value) {
@@ -385,7 +385,7 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                           ),
                                           onSaved: (input) {
                                             setState(() {
-                                              address.country = input;
+                                              // address.country = input;
                                             });
                                           },
                                           validator: (value) {

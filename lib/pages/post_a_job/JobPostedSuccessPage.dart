@@ -85,9 +85,9 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
         if(widget.taskRequest != null) {
           userFirstName = widget.taskRequest.user.firstName;
           userLastName = widget.taskRequest.user.lastName;
-          addressStreet = widget.taskRequest.address.street;
-          addressCity = widget.taskRequest.address.city;
-          addressCountry = widget.taskRequest.address.country;
+          // addressStreet = widget.taskRequest.address.street;
+          // addressCity = widget.taskRequest.address.city;
+          // addressCountry = widget.taskRequest.address.country;
           price = widget.createdTask.price;
         }
       });
@@ -102,9 +102,9 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
         if(widget.professionalRequest != null) {
           userFirstName = widget.professionalRequest.user.firstName;
           userLastName = widget.professionalRequest.user.lastName;
-          addressStreet = widget.professionalRequest.address.street;
-          addressCity = widget.professionalRequest.address.city;
-          addressCountry = widget.professionalRequest.address.country;
+          // addressStreet = widget.professionalRequest.address.street;
+          // addressCity = widget.professionalRequest.address.city;
+          // addressCountry = widget.professionalRequest.address.country;
         }
       });
     }

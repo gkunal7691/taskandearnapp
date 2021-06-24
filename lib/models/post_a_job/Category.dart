@@ -78,32 +78,48 @@ class TaskDetails {
 }
 
 class Address {
+  int addressId;
   String street;
   String city;
-  dynamic pincode;
   String country;
+  String pincode;
+  String contact;
+  String contactStatus;
 
-  Address({this.street, this.city, this.pincode, this.country});
+  Address({
+    this.addressId,
+    this.street,
+    this.city,
+    this.country,
+    this.pincode,
+    this.contact,
+    this.contactStatus,
+  });
 
-  factory Address.fromJson(Map<String, dynamic> json) => Address(
-    street: json["street"],
-    city: json["city"],
-    pincode: json["pincode"],
-    country: json["country"],
-  );
-
-  Map<String, dynamic> toJson() {
-    try {
-      Map<String, dynamic> map = {
-        "street": street != null ? street : null,
-        "city": city != null ? city : null,
-        "pincode": pincode != null ? pincode : null,
-        "country": country != null ? country : null,
-      };
-      return map;
-    } catch(e) {
-      print("cm $e");
-      return null;
+  factory Address.fromJson(Map<String, dynamic> json) {
+    // print("ct json $json");
+    if(json != null) {
+      return new Address(
+        addressId: json["addressId"],
+        street: json["street"],
+        city: json["city"],
+        country: json["country"],
+        pincode: json["pincode"],
+        contact: json["contact"],
+        contactStatus: json["contactStatus"],
+      );
+    } else {
+      return new Address();
     }
   }
+
+  Map<String, dynamic> toJson() => {
+    "addressId": addressId,
+    "street": street != null ? street : null,
+    "city": city != null ? city : null,
+    "country": country != null ? country : null,
+    "pincode": pincode != null ? pincode : null,
+    "contact": contact != null ? contact : null,
+    "contactStatus": contactStatus != null ? contactStatus : null,
+  };
 }

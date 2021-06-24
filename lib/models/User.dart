@@ -5,7 +5,6 @@ class User {
   String email;
   int exp;
   int iat;
-  dynamic professionalId;
 
   User({
     this.userId,
@@ -14,7 +13,6 @@ class User {
     this.email,
     this.exp,
     this.iat,
-    this.professionalId,
   });
 
   factory User.fromJson(Map<dynamic, dynamic> json) => User(
@@ -24,7 +22,6 @@ class User {
     email: json["email"],
     exp: json["exp"],
     iat: json["iat"],
-    professionalId: json["professionalId"],
   );
 
   Map<String, dynamic> toJson() {
@@ -36,7 +33,6 @@ class User {
         "email": email != null ? email : null,
         "exp": exp != null ? exp : null,
         "iat": iat != null ? iat : null,
-        "professionalId": professionalId != null ? professionalId : null,
       };
       return map;
     } catch(e) {
