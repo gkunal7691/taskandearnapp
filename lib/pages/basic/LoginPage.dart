@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
 import 'package:task_and_earn/models/Login_Model.dart';
-import 'package:task_and_earn/pages/HomePage.dart';
-import 'package:task_and_earn/pages/ProgressHUD.dart';
-import 'package:task_and_earn/services/UserAuthService.dart';
+import 'HomePage.dart';
+import '../shared/ProgressHUD.dart';
+import 'package:task_and_earn/services/UserService.dart';
 import 'package:toast/toast.dart';
 import 'SignUpPage.dart';
 
@@ -30,7 +30,7 @@ class LoginPageWidget extends StatefulWidget {
 }
 
 class _LoginPageWidgetState extends State<LoginPageWidget> {
-  UserAuthService userAuthService = new UserAuthService();
+  UserService userService = new UserService();
   SharedPref sharedPref = new SharedPref();
   LoginRequestModel loginRequestModel;
   bool isApiCallProcess = false;
@@ -143,6 +143,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                           controller: userNameController,
                           onSaved: (input) => loginRequestModel.email = input,
                           keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.next,
                           decoration: InputDecoration(
                             hintText: "Enter email or username",
                             labelText: "Enter email or username",
@@ -163,6 +164,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                           },
                           obscureText: isHidePassword,
                           keyboardType: TextInputType.visiblePassword,
+                          textInputAction: TextInputAction.done,
                           decoration: InputDecoration(
                             hintText: "Password",
                             labelText: "Password",
@@ -217,7 +219,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                           setState(() {
                             isApiCallProcess = true;
                           });
-                          await userAuthService.onLogin(loginRequestModel).then((value) async {
+                          await userService.onLogin(loginRequestModel).then((value) async {
                             setState(() {
                               isApiCallProcess = false;
                             });
@@ -264,7 +266,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
   }
 
   Future onCheckToken(String token) async {
-    await userAuthService.onCheckToken(token).then((res) => {
+    await userService.onCheckToken(token).then((res) => {
       if (res.success) {
         //print("lp value.user: ${value.user.toJson()}"),
         sharedPref.onSetSharedPreferencesValue("loggedInUserId", res.user.userId.toString()),

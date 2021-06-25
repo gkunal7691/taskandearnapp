@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import '../../models/post_a_job/Task.dart';
 import 'package:task_and_earn/models/become_a_earner/Professional.dart';
 import 'package:toast/toast.dart';
-import '../HomePage.dart';
+import '../basic/HomePage.dart';
 import 'CategoriesPage.dart';
 
 // ignore: must_be_immutable

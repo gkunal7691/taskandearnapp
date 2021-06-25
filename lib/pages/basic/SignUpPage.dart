@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:task_and_earn/models/SignUp_Model.dart';
-import 'package:task_and_earn/services/UserAuthService.dart';
+import 'package:task_and_earn/services/UserService.dart';
 import 'package:toast/toast.dart';
 import 'LoginPage.dart';
-import 'ProgressHUD.dart';
+import '../shared/ProgressHUD.dart';
 
 class SignUpPage extends StatelessWidget {
   @override
@@ -28,7 +28,7 @@ class SignUpPageWidget extends StatefulWidget {
 }
 
 class _SignUpPageWidgetSate extends State<SignUpPageWidget> {
-  UserAuthService userAuthService = new UserAuthService();
+  UserService userAuthService = new UserService();
   SignUpRequestModel signUpRequestModel;
   bool isApiCallProcess = false;
   final _singUpFormKey = GlobalKey<FormState>();

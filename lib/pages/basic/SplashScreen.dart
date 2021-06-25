@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
-import 'package:task_and_earn/pages/HomePage.dart';
-import 'package:task_and_earn/services/UserAuthService.dart';
+import 'HomePage.dart';
+import 'package:task_and_earn/services/UserService.dart';
 import 'package:toast/toast.dart';
 import 'LoginPage.dart';
 
@@ -29,7 +29,7 @@ class SplashScreenWidget extends StatefulWidget {
 }
 
 class _SplashScreenWidgetState extends State<SplashScreenWidget> {
-  UserAuthService userAuthService = new UserAuthService();
+  UserService userAuthService = new UserService();
   SharedPref sharedPref = new SharedPref();
   String token, appVersion;
   bool isApiCallProcess = false;
@@ -70,7 +70,7 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
           ),
           Padding(padding: EdgeInsets.only(top: 8.0)),
           Text(
-            "Version " + appVersion,
+            "Version " + appVersion != null ? appVersion : "",
             style: TextStyle(
                 fontSize: 20.0,
                 color: Colors.lightBlue,
@@ -135,10 +135,12 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
 
   onGetAppVersion() async {
     appVersion = await userAuthService.onGetAppVersion();
-    setState(() {
-      appVersion = appVersion;
-      sharedPref.onSetSharedPreferencesValue("appVersion", appVersion);
-    });
+    if(appVersion != null) {
+      setState(() {
+        appVersion = appVersion;
+        sharedPref.onSetSharedPreferencesValue("appVersion", appVersion);
+      });
+    }
   }
 
   startTimer() async {

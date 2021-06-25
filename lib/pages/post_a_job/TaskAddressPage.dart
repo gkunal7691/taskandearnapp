@@ -9,7 +9,7 @@ import 'package:task_and_earn/services/CategoryService.dart';
 import 'package:task_and_earn/services/ProfessionalService.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
 import 'package:toast/toast.dart';
-import '../ProgressHUD.dart';
+import '../shared/ProgressHUD.dart';
 import 'JobPostedSuccessPage.dart';
 import 'TaskDetailsPage.dart';
 

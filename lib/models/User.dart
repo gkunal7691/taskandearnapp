@@ -1,3 +1,25 @@
+class UserResponse {
+  final bool success;
+  final User user;
+
+  UserResponse({
+    this.success,
+    this.user
+  });
+
+  factory UserResponse.fromJson(Map<String, dynamic> json) {
+    return UserResponse(
+      success: json["success"],
+      user: User.fromJson(json["data"])
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    "success": success,
+    "user": user.toJson()
+  };
+}
+
 class User {
   int userId;
   String firstName;

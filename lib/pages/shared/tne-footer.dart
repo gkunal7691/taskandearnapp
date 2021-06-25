@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_and_earn/pages/post_a_job/CategoriesPage.dart';
 import 'package:task_and_earn/util/Util.dart';
 import 'package:toast/toast.dart';
-import '../HomePage.dart';
+import '../basic/HomePage.dart';
 
 class TneFooter extends StatelessWidget {
   @override

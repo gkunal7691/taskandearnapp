@@ -5,14 +5,15 @@ import 'package:jiffy/jiffy.dart';
 import 'package:task_and_earn/Util/SharedPref.dart';
 import 'package:task_and_earn/models/PopularService.dart';
 import 'package:task_and_earn/models/Task_Model.dart';
+import 'package:task_and_earn/pages/shared/tne_drawer/tne-drawer.dart';
 import 'package:task_and_earn/services/CategoryService.dart';
-import 'package:task_and_earn/services/ProfessionalService.dart';
+import 'package:task_and_earn/services/TaskService.dart';
+import 'package:task_and_earn/util/Util.dart';
 import 'package:task_and_earn/util/Variables.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'ProgressHUD.dart';
-import 'basic/AllTasks.dart';
-import 'post_a_job/CategoriesPage.dart';
-import 'package:task_and_earn/pages/LoginPage.dart';
+import '../shared/ProgressHUD.dart';
+import 'Tasks.dart';
+import '../post_a_job/CategoriesPage.dart';
+import 'LoginPage.dart';
 import 'package:toast/toast.dart';
 import "package:task_and_earn/util/StringExtension.dart";
 
@@ -42,7 +43,7 @@ class HomePageWidget extends StatefulWidget {
 
 class _HomePageWidgetState extends State<HomePageWidget> {
   CategoryService categoryService = new CategoryService();
-  ProfessionalService professionalService = new ProfessionalService();
+  TaskService taskService =  new TaskService();
   SharedPref sharedPref = new SharedPref();
   bool isApiCallProcess = false;
   String token;
@@ -56,7 +57,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   List<PopularService> popularServices = [];
   ScrollController _taskScrollController = new ScrollController();
   List<Task> recentTasks = [];
-  ScrollController _topProfScrollController = new ScrollController();
 
   @override
   void initState() {
@@ -83,7 +83,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     );
     return Scaffold(
       key: _scaffoldKey,
-      drawer: _drawer(context),
+      drawer: TneDrawer(
+        appVersion: appVersion != null ? appVersion : "",
+        loggedInUserFName: loggedInUserFName != null ? loggedInUserFName : "",
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
         child: Column(
@@ -180,7 +183,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 Padding(padding: EdgeInsets.only(right: 20.0)),
                 GestureDetector(
                   onTap: () {
-                    _launchURL("https://taskandearn-dev.herokuapp.com/become-earner-login");
+                    Util.launchURL("https://taskandearn-dev.herokuapp.com/become-earner-login");
                   },
                   child: Container(
                     width: 140,
@@ -288,152 +291,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             )
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _drawer(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          UserAccountsDrawerHeader(
-            accountName: Text(
-              "Hello " + loggedInUserFName.capitalize(),
-              style: TextStyle(
-                fontSize: 23.0,
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            accountEmail: Text(""),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.blue,
-              child: Icon(Icons.account_circle_sharp, size: 70.0),
-            ),
-          ),
-          ListTile(
-            title: Text(
-              "My Profile",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.lightBlue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap:() {
-              onShowToast("My Profile Feature is in under process", 2);
-            },
-          ),
-          ListTile(
-            title: Text(
-              "My Tasks",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.lightBlue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap:() {
-              onShowToast("My Tasks Feature is in under process", 2);
-            },
-          ),
-          Divider(
-            color: Colors.black,
-            height: 5.0,
-          ),
-          ListTile(
-            title: Text(
-              "All Tasks",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.lightBlue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap:() {
-              onShowToast("All Tasks Feature is in under process", 2);
-            },
-          ),
-          ListTile(
-            title: Text(
-              "All Professionals",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.lightBlue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap:() {
-              onShowToast("All Professionals Feature is in under process", 2);
-            },
-          ),
-          Divider(
-            color: Colors.black,
-            height: 5.0,
-          ),
-          ListTile(
-            title: Text(
-              "About",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.lightBlue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap:() {
-              onShowToast("About Feature is in under process", 2);
-            },
-          ),
-          ListTile(
-            title: Text(
-              "Why Taskandearn?",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.lightBlue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap:() {
-              onShowToast("This Feature is in under process", 2);
-            },
-          ),
-          ListTile(
-            title: Text(
-              "Support",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.lightBlue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap:() {
-              onShowToast("Support Feature is in under process", 2);
-            },
-          ),
-          ListTile(
-            title: Text(
-              "Logout",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.lightBlue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap:() async {
-              await onLogout();
-            },
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 16.0),
-            child: Text(
-              "V " + appVersion,
-              style: TextStyle(
-                fontSize: 18.0,
-              ),
-            ),
-          ),
-        ]
       ),
     );
   }
@@ -688,7 +545,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         primary: Colors.blue.shade600,
                       ),
                       onPressed: () {
-                        _launchURL("https://taskandearn-dev.herokuapp.com/become-earner-login");
+                        Util.launchURL("https://taskandearn-dev.herokuapp.com/become-earner-login");
                       },
                     ),
                   ),
@@ -720,7 +577,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
     if(token != null) {
       await onGetPopularServices();
-      await onGetTasks();
+      await onGetAllTasks();
     } else {
       setState(() {
         isApiCallProcess = false;
@@ -730,7 +587,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   Future onGetPopularServices() async {
     await categoryService.getPopularServices(token).then((res) => {
-      // print("hp res.data ${res.data}"),
       if(res.success) {
         setState(() {
           popularServices = res.data.toList();
@@ -746,11 +602,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     });
   }
 
-  Future onGetTasks() async {
+  Future onGetAllTasks() async {
     setState(() {
       isApiCallProcess = true;
     });
-    await categoryService.getTasks(token).then((res) => {
+    await taskService.getAllTasks(token).then((res) => {
       if(res.success) {
         setState(() {
           recentTasks = res.data.toList();
@@ -778,19 +634,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         CategoriesPage(isPostAJob: isPostAJob)));
   }
 
-  void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      onShowToast("Could not launch $url", 2);
-    }
-  }
-
   void onRouteAllTasks() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AllTasksPage()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TasksPage(isShowAllTasks: true)));
   }
 
   void onShowToast(String msg, int timeInSec) {
-    Toast.show(msg, context, duration: timeInSec, gravity:  Toast.BOTTOM);
+    Toast.show(msg, context, duration: timeInSec, gravity: Toast.BOTTOM);
   }
 }

@@ -6,7 +6,7 @@ import 'package:task_and_earn/models/Task_Model.dart';
 import 'ApiManager.dart';
 
 class TaskService {
-  Future<TaskResponse> getTasks(String token) async {
+  Future<TaskResponse> getAllTasks(String token) async {
     try {
       var headers = {
         'Accept': 'application/json',
@@ -14,6 +14,28 @@ class TaskService {
       };
       final response = await http.get(Uri.parse(ApiManager.baseUrl + "task"), headers: headers);
       // print("ts response ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        return TaskResponse.fromJson(json.decode(response.body));
+      } else {
+        throw new Exception("Failed to load data");
+      }
+    } on SocketException {
+      throw Exception("No Internet connection");
+    } on TimeoutException {
+      throw Exception("Timeout");
+    } catch(e) {
+      throw Exception("Exception $e");
+    }
+  }
+
+  Future<TaskResponse> getUserPostedTasks(String token) async {
+    try {
+      var headers = {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+      final response = await http.get(Uri.parse(ApiManager.baseUrl + "task/mytasks/posted"), headers: headers);
 
       if (response.statusCode == 200 || response.statusCode == 400) {
         return TaskResponse.fromJson(json.decode(response.body));

@@ -5,8 +5,8 @@ import '../../models/post_a_job/Category.dart';
 import 'SubCategoriesPage.dart';
 import 'package:task_and_earn/services/CategoryService.dart';
 import 'package:toast/toast.dart';
-import '../HomePage.dart';
-import '../ProgressHUD.dart';
+import '../basic/HomePage.dart';
+import '../shared/ProgressHUD.dart';
 
 class CategoriesPage extends StatelessWidget {
   final bool isPostAJob;

@@ -4,7 +4,7 @@ import '../../models/post_a_job/Category.dart';
 import '../../models/post_a_job/SubCategory.dart';
 import 'package:task_and_earn/services/CategoryService.dart';
 import 'package:toast/toast.dart';
-import '../ProgressHUD.dart';
+import '../shared/ProgressHUD.dart';
 import 'CategoriesPage.dart';
 import 'TaskDetailsPage.dart';
 

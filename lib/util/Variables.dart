@@ -12,6 +12,7 @@ class Variables {
   // Todo Text.
   static final double cardTextSizeM = 20.0;
   static final double cardTextSizeS = 16.0;
+  static final double textSizeL = 24.0;
   static final double textSizeM = 20.0;
   static final double textSizeS = 18.0;
   static final double textSizeXs = 16.0;

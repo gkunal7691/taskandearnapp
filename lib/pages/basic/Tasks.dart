@@ -7,10 +7,17 @@ import 'package:task_and_earn/services/TaskService.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
 import 'package:task_and_earn/util/Util.dart';
 import 'package:task_and_earn/util/Variables.dart';
-import '../HomePage.dart';
-import '../ProgressHUD.dart';
+import 'HomePage.dart';
+import '../shared/ProgressHUD.dart';
 
-class AllTasksPage extends StatelessWidget {
+class TasksPage extends StatelessWidget {
+  final bool isShowAllTasks;
+
+  TasksPage({
+    Key key,
+    @required this.isShowAllTasks
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,25 +26,34 @@ class AllTasksPage extends StatelessWidget {
         fontFamily: 'Poppins',
       ),
       title: "Task and Earn",
-      home: AllTasksPageWidget(),
+      home: TasksPageWidget(
+        isShowAllTasks: isShowAllTasks
+      )
     );
   }
 }
 
-class AllTasksPageWidget extends StatefulWidget {
+class TasksPageWidget extends StatefulWidget {
+  final bool isShowAllTasks;
+
+  TasksPageWidget({
+    Key key,
+    @required this.isShowAllTasks
+  }) : super(key: key);
+
   @override
-  _AllTasksPageWidgetState createState() => _AllTasksPageWidgetState();
+  _TasksPageWidgetState createState() => _TasksPageWidgetState();
 }
 
-class _AllTasksPageWidgetState extends State<AllTasksPageWidget> {
+class _TasksPageWidgetState extends State<TasksPageWidget> {
   bool isApiCallProcess = false;
   final _searchQueryKey = TextEditingController();
   String _searchQuery;
-  ScrollController _scrollController = ScrollController(initialScrollOffset: Variables.recentTaskCardH.h);
+  ScrollController _scrollController = ScrollController(initialScrollOffset: 0.0);
   String token;
   SharedPref sharedPref = new SharedPref();
   TaskService taskService =  new TaskService();
-  List<Task> allTasks = [];
+  List<Task> taskList = [];
   List<Task> tempTasks = [];
 
   @override
@@ -85,7 +101,7 @@ class _AllTasksPageWidgetState extends State<AllTasksPageWidget> {
                     ),
                     Container(
                       child: Text(
-                        "All Tasks",
+                        widget.isShowAllTasks ? "All Tasks" : "My Tasks",
                         style: TextStyle(
                             fontSize: Variables.headerTextSize.sp,
                             fontWeight: FontWeight.bold
@@ -152,7 +168,8 @@ class _AllTasksPageWidgetState extends State<AllTasksPageWidget> {
                     controller: _scrollController,
                     thickness: 8.0,
                     child: ListView.builder(
-                      itemCount: allTasks.length,
+                      shrinkWrap: true,
+                      itemCount: taskList.length,
                       itemBuilder: _taskItemBuilder,
                     ),
                   ),
@@ -165,8 +182,11 @@ class _AllTasksPageWidgetState extends State<AllTasksPageWidget> {
   }
 
   Widget _taskItemBuilder(BuildContext context, int index) {
-    if(allTasks.length != 0) {
-      var task = this.allTasks[index];
+    if(taskList.length != 0) {
+      Task task = new Task();
+      task = this.taskList[index];
+      print("index $index");
+      print("task ${task.toJson()}");
       return _taskItemUiBuilder(task);
     } else {
       return Container();
@@ -360,6 +380,9 @@ class _AllTasksPageWidgetState extends State<AllTasksPageWidget> {
                       ),
                       onPressed: () {
                         Util.launchURL("https://taskandearn-dev.herokuapp.com/become-earner-login");
+                        // print(Variables.recentTaskCardH);
+                        // print((Variables.recentTaskCardH + 15.0) * taskList.length);
+                        // print(MediaQuery.of(context).size.height);
                       },
                     ),
                   ),
@@ -395,7 +418,7 @@ class _AllTasksPageWidgetState extends State<AllTasksPageWidget> {
     });
 
     if(token != null) {
-      await onGetTasks();
+      widget.isShowAllTasks ? await onGetAllTasks() : await onGetUserPostedTasks();
     } else {
       setState(() {
         isApiCallProcess = false;
@@ -403,16 +426,36 @@ class _AllTasksPageWidgetState extends State<AllTasksPageWidget> {
     }
   }
 
-  Future onGetTasks() async {
+  Future onGetAllTasks() async {
     setState(() {
       isApiCallProcess = true;
     });
-    await taskService.getTasks(token).then((res) => {
+    await taskService.getAllTasks(token).then((res) => {
       if(res.success) {
         setState(() {
-          allTasks = res.data.toList();
+          taskList = res.data.toList();
           tempTasks = res.data.toList();
-          print("hp allTasks len ${allTasks.length}");
+          print("ts allTasks len ${taskList.length}");
+          isApiCallProcess = false;
+        }),
+      }
+    }).catchError((e) {
+      setState(() {
+        isApiCallProcess = false;
+      });
+    });
+  }
+
+  Future onGetUserPostedTasks() async {
+    setState(() {
+      isApiCallProcess = true;
+    });
+    await taskService.getUserPostedTasks(token).then((res) => {
+      if(res.success) {
+        setState(() {
+          taskList = res.data.toList();
+          tempTasks = res.data.toList();
+          print("ts userPostedTasks len ${taskList.length}");
           isApiCallProcess = false;
         }),
       }
@@ -424,20 +467,18 @@ class _AllTasksPageWidgetState extends State<AllTasksPageWidget> {
   }
 
   void onFilterTasks() {
-    print("_searchQueryKey.text ${_searchQueryKey.text.toLowerCase()}");
     if(_searchQueryKey.text != null) {
-      allTasks.clear();
+      taskList.clear();
       tempTasks.forEach((element) {
         if (element.title.toLowerCase().contains(_searchQueryKey.text.toLowerCase())) {
-          allTasks.add(element);
+          taskList.add(element);
         }
       });
     } else {
-      allTasks = tempTasks;
+      taskList = tempTasks;
     }
     setState(() {
-      allTasks = allTasks;
+      taskList = taskList;
     });
-    print("allTasks len ${allTasks.length}");
   }
 }
