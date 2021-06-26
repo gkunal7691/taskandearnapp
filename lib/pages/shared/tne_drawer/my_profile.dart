@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task_and_earn/models/User.dart';
 import 'package:task_and_earn/services/UserService.dart';
-import "package:task_and_earn/util/StringExtension.dart";
+import "package:task_and_earn/util/extensions.dart";
 import 'package:task_and_earn/pages/basic/HomePage.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
 import 'package:task_and_earn/util/Variables.dart';
@@ -98,7 +98,7 @@ class _MyProfileWidgetState extends State<MyProfileWidget> {
                   Container(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Text(
-                      "Welcome " + userDetails.firstName.capitalize(),
+                      userDetails != null ? "Welcome " + userDetails.firstName.capitalize() : "Welcome User",
                       style: TextStyle(
                         fontSize: Variables.headerSubTextSize.sp,
                         fontWeight: FontWeight.bold,
@@ -176,7 +176,7 @@ class _MyProfileWidgetState extends State<MyProfileWidget> {
                             ),
                             Flexible(
                               child: Text(
-                                userDetails.firstName.capitalize(),
+                                userDetails != null ? userDetails.firstName.capitalize() : "N/A",
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: Variables.textSizeS.sp,
@@ -202,7 +202,7 @@ class _MyProfileWidgetState extends State<MyProfileWidget> {
                             ),
                             Flexible(
                               child: Text(
-                                userDetails.lastName.capitalize(),
+                                userDetails != null ? userDetails.lastName.capitalize() : "N/A",
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: Variables.textSizeS.sp,
@@ -228,7 +228,7 @@ class _MyProfileWidgetState extends State<MyProfileWidget> {
                             ),
                             Flexible(
                               child: Text(
-                                userDetails.email,
+                                userDetails != null ? userDetails.email != null ? userDetails.email : "N/A" : "N/A",
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: Variables.textSizeS.sp,

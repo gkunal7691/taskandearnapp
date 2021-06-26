@@ -15,7 +15,7 @@ import 'Tasks.dart';
 import '../post_a_job/CategoriesPage.dart';
 import 'LoginPage.dart';
 import 'package:toast/toast.dart';
-import "package:task_and_earn/util/StringExtension.dart";
+import "package:task_and_earn/util/extensions.dart";
 
 class HomePage extends StatelessWidget {
   @override

@@ -28,7 +28,7 @@ dependencies:
   http: ^0.13.3
   shared_preferences: ^2.0.5
   toast: ^0.1.5
-  package_info: ^2.0.0
+  package_info_plus: ^1.0.3
   intl: ^0.17.0
   jiffy: ^4.1.0
   flutter_screenutil: ^5.0.0+2

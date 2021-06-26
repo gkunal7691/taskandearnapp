@@ -12,7 +12,7 @@ class AboutUs extends StatelessWidget {
           fontFamily: 'Poppins',
         ),
         title: "Task and Earn",
-        home: AboutUsWidget()
+        home: AboutUsWidget(),
     );
   }
 }
@@ -23,8 +23,6 @@ class AboutUsWidget extends StatefulWidget {
 }
 
 class _AboutUsWidgetState extends State<AboutUsWidget> {
-  ScrollController _scrollController = new ScrollController();
-
   @override
   void initState() {
     super.initState();
@@ -62,7 +60,7 @@ class _AboutUsWidgetState extends State<AboutUsWidget> {
                   child: Text(
                     "Our Story",
                     style: TextStyle(
-                      fontSize: Variables.textSizeL,
+                      fontSize: Variables.textSizeL.sp,
                       color: Variables.blueColor,
                       fontWeight: FontWeight.bold,
                     ),

@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task_and_earn/pages/basic/LoginPage.dart';
 import 'package:task_and_earn/pages/basic/Tasks.dart';
-import 'package:task_and_earn/pages/shared/tne_drawer/tne_support.dart';
 import 'package:task_and_earn/pages/shared/tne_drawer/why_tne.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
-import "package:task_and_earn/util/StringExtension.dart";
+import "package:task_and_earn/util/extensions.dart";
 import 'package:task_and_earn/util/Variables.dart';
 import 'package:toast/toast.dart';
 import 'about_us.dart';
@@ -140,20 +139,6 @@ class TneDrawer extends StatelessWidget {
               onTap:() {
                 onShowToast("Redirecting...", 2);
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WhyTne()));
-              },
-            ),
-            ListTile(
-              title: Text(
-                "Support",
-                style: TextStyle(
-                  fontSize: Variables.textSizeM.sp,
-                  color: Colors.lightBlue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap:() {
-                onShowToast("Redirecting...", 2);
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TneSupport()));
               },
             ),
             ListTile(

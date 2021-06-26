@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:task_and_earn/pages/dialogs/forgot_password.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
 import 'package:task_and_earn/models/Login_Model.dart';
+import 'package:task_and_earn/util/Variables.dart';
 import 'HomePage.dart';
 import '../shared/ProgressHUD.dart';
 import 'package:task_and_earn/services/UserService.dart';
@@ -14,6 +15,9 @@ class LoginPage extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Task and Earn",
+      theme: ThemeData(
+        fontFamily: 'Poppins',
+      ),
       home: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0.0,
@@ -65,8 +69,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
   Widget _uiSetUp(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Container(
-        child: SingleChildScrollView(
+      child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
@@ -77,46 +80,47 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                   fit: BoxFit.fill,
                 ),
               ),
-              Padding(padding: EdgeInsets.only(top: 20.0)),
+
+              Padding(padding: EdgeInsets.only(top: 15.0)),
               Column(
                 children: [
-                  Container(
-                    child: Text(
-                      "Welcome Back",
-                      style: TextStyle(
-                          fontSize: 30.0,
-                          color: Color(0xFF039BE5),
-                          fontWeight: FontWeight.bold),
+                  Text(
+                    "Welcome Back",
+                    style: TextStyle(
+                      fontSize: Variables.textSizeL,
+                      color: Color(0xFF039BE5),
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Padding(padding: EdgeInsets.only(top: 20.0)),
+
+                  Padding(padding: EdgeInsets.only(top: 15.0)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ToggleButtons(
                         borderRadius: BorderRadius.circular(50.0),
                         selectedColor: Colors.white,
-                        fillColor: Color(0xFF039BE5),
+                        fillColor: Variables.blueColor,
                         splashColor: Colors.purple,
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 30.0),
+                            padding: EdgeInsets.symmetric(horizontal: 25.0),
                             child: Text(
                               'Log In',
                               style: TextStyle(
-                                fontSize: 23.0,
+                                fontSize: Variables.textSizeM,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 30.0),
+                            padding: EdgeInsets.symmetric(horizontal: 25.0),
                             child: Text(
                               'Sign Up',
                               style: TextStyle(
-                                fontSize: 23.0,
+                                fontSize: Variables.textSizeM,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF039BE5),
+                                color: Variables.blueColor,
                               ),
                             ),
                           ),
@@ -135,8 +139,10 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                       ),
                     ],
                   ),
+
                   Container(
-                    padding: EdgeInsets.all(26.0),
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    padding: EdgeInsets.only(top: 10.0),
                     child: Column(
                       children: [
                         TextFormField(
@@ -156,6 +162,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                             return null;
                           },
                         ),
+
                         Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           controller: passwordController,
@@ -192,53 +199,49 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                       ],
                     ),
                   ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(right: 25.0, top: 10.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            showForgotPasswordDialog(context: context);
+                          },
+                          child: Text(
+                            "Forgot Password?",
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
                   Container(
-                    padding: EdgeInsets.only(top: 30.0),
+                    padding: EdgeInsets.only(top: 50.0),
                     // ignore: deprecated_member_use
                     child: RaisedButton(
                       padding: EdgeInsets.symmetric(
-                          vertical: 10.0,
-                          horizontal: MediaQuery.of(context).size.width * 0.25),
+                        vertical: 5.0,
+                        horizontal: MediaQuery.of(context).size.width * 0.25,
+                      ),
                       shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(20.0))),
+                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      ),
                       child: Text(
                         "Log In",
                         style: TextStyle(
-                          fontSize: 28.0,
+                          fontSize: Variables.textSizeL,
                           color: Colors.white,
                         ),
                       ),
-                      color: Color(0xFF039BE5),
+                      color: Variables.blueColor,
                       splashColor: Colors.purple,
                       elevation: 15.0,
                       highlightElevation: 6.0,
                       onPressed: () async {
-                        if (_formKey.currentState.validate()) {
-                          _formKey.currentState.save();
-                          setState(() {
-                            isApiCallProcess = true;
-                          });
-                          await userService.onLogin(loginRequestModel).then((value) async {
-                            setState(() {
-                              isApiCallProcess = false;
-                            });
-                            // print("value.success ${value.success}");
-                            if(value.success && value.data.token.isNotEmpty) {
-                              print("lp value.data.token: ${value.data.token}");
-                              await onCheckToken(value.data.token);
-                              sharedPref.onSetSharedPreferencesValue("tokenKey", value.data.token);
-                              onRouteToHome();
-                            }
-                            else if(!value.success && value.error.name != null) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text(value.error.name)));
-                            }
-                          });
-
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Data is in processing.')));
-                        }
+                        await onPressedLoginButton();
                       },
                     ),
                   ),
@@ -247,12 +250,35 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
             ],
           ),
         ),
-      ),
     );
   }
 
-  onPressedLoginButton(key) {
-    print("onLoginButtonPressed " + key.currentState.validate().toString());
+  Future onPressedLoginButton() async {
+    if(_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      setState(() {
+        isApiCallProcess = true;
+      });
+      await userService.onLogin(loginRequestModel).then((value) async {
+        setState(() {
+          isApiCallProcess = false;
+        });
+        // print("value.success ${value.success}");
+        if(value.success && value.data.token.isNotEmpty) {
+          print("lp value.data.token: ${value.data.token}");
+          await onCheckToken(value.data.token);
+          sharedPref.onSetSharedPreferencesValue("tokenKey", value.data.token);
+          onRouteToHome();
+        }
+        else if(!value.success && value.error.name != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(value.error.name)));
+        }
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Data is in processing.')));
+    }
   }
 
   onPressedSignUpButton() {
@@ -260,7 +286,6 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
   }
 
   onRouteToHome() {
-    // print("onRouteToHome");
     onShowToast("Login Successful", 4);
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
   }

@@ -63,3 +63,83 @@ class User {
     }
   }
 }
+
+class ForgotPasswordRequest {
+  String email;
+
+  ForgotPasswordRequest({this.email});
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> map = {
+      "email": email != null ? email.trim() : null,
+    };
+    return map;
+  }
+}
+
+class ForgotPasswordResponse {
+  final bool success;
+  final ForgotPwdResData forgotPwdResData;
+  final String data;
+
+  ForgotPasswordResponse({
+    this.success,
+    this.forgotPwdResData,
+    this.data,
+  });
+
+  factory ForgotPasswordResponse.fromJson(Map<String, dynamic> json) {
+    if(json["success"]) {
+      return ForgotPasswordResponse(
+        success: json["success"],
+        forgotPwdResData: ForgotPwdResData.fromJson(json["data"]),
+      );
+    } else {
+      return ForgotPasswordResponse(
+        success: json["success"],
+        data: json["data"],
+      );
+    }
+  }
+
+  Map<String, dynamic> toJson() => {
+    "success": success,
+    "data": forgotPwdResData.toJson(),
+  };
+}
+
+class ForgotPwdResData {
+  String messageId;
+  ResponseMetadata responseMetadata;
+
+  ForgotPwdResData({
+    this.messageId,
+    this.responseMetadata,
+  });
+
+  factory ForgotPwdResData.fromJson(Map<String, dynamic> json) => ForgotPwdResData(
+    messageId: json["MessageId"],
+    responseMetadata: ResponseMetadata.fromJson(json["ResponseMetadata"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "MessageId": messageId,
+    "ResponseMetadata": responseMetadata.toJson(),
+  };
+}
+
+class ResponseMetadata {
+  ResponseMetadata({
+    this.requestId,
+  });
+
+  String requestId;
+
+  factory ResponseMetadata.fromJson(Map<String, dynamic> json) => ResponseMetadata(
+    requestId: json["RequestId"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "RequestId": requestId,
+  };
+}
