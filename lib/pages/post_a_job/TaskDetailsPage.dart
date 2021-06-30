@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:task_and_earn/models/Task_Model.dart';
+import 'package:task_and_earn/models/post_a_job/PostAJob.dart';
+import 'package:task_and_earn/util/Util.dart';
+import 'package:task_and_earn/util/Variables.dart';
 import '../../models/post_a_job/Category.dart';
-import 'SubCategoriesPage.dart';
+import 'CategoriesPage.dart';
 import 'TaskAddressPage.dart';
 
-// ignore: must_be_immutable
 class TaskDetailsPage extends StatelessWidget {
-  final bool isPostAJob;
-  Category selectedCategory;
-  List<int> selectedSubCategories;
-  TaskDetails taskDetails;
-  Address address;
+  final CategoryData categoryData;
+  final Task task;
+  final Address address;
 
   TaskDetailsPage({
     Key key,
-    @required this.isPostAJob,
-    @required this.selectedCategory,
-    @required this.selectedSubCategories,
-    @required this.taskDetails,
+    @required this.categoryData,
+    @required this.task,
     @required this.address,
   }) : super(key: key);
 
@@ -25,11 +25,12 @@ class TaskDetailsPage extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Task and Earn",
+      theme: ThemeData(
+        fontFamily: "Poppins",
+      ),
       home: TaskDetailsPageWidget(
-        isPostAJob: isPostAJob,
-        selectedCategory: selectedCategory,
-        selectedSubCategories: selectedSubCategories,
-        taskDetails: taskDetails,
+        categoryData: categoryData,
+        task: task,
         address: address,
       ),
     );
@@ -38,18 +39,14 @@ class TaskDetailsPage extends StatelessWidget {
 
 // ignore: must_be_immutable
 class TaskDetailsPageWidget extends StatefulWidget {
-  final bool isPostAJob;
-  Category selectedCategory;
-  List<int> selectedSubCategories;
-  TaskDetails taskDetails;
+  CategoryData categoryData;
+  Task task;
   Address address;
 
   TaskDetailsPageWidget({
     Key key,
-    @required this.isPostAJob,
-    @required this.selectedCategory,
-    @required this.selectedSubCategories,
-    @required this.taskDetails,
+    @required this.categoryData,
+    @required this.task,
     @required this.address,
   }) : super(key: key);
 
@@ -58,7 +55,7 @@ class TaskDetailsPageWidget extends StatefulWidget {
 }
 
 class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
-  TaskDetails taskDetails = new TaskDetails();
+  Task task = new Task();
   final _taskDetailsFormKey = GlobalKey<FormState>();
   final taskTitleController = TextEditingController();
   final taskDescController = TextEditingController();
@@ -67,15 +64,14 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
   @override
   void initState() {
     super.initState();
-    print("tdp selectedCategory ${widget.selectedCategory.toJson()}");
-    print("tdp selectedSubCategories ${widget.selectedSubCategories}");
-    if(widget.taskDetails != null) {
-      print("tdp taskDetails ${widget.taskDetails.toJson()}");
+    print("tdp categoryData ${widget.categoryData.toJson()}");
+    if(widget.task != null) {
+      print("tdp taskDetails ${widget.task.toJson()}");
       setState(() {
-        taskDetails = widget.taskDetails;
-        taskTitleController.text = widget.taskDetails.taskTitle;
-        taskDescController.text = widget.taskDetails.taskDescription;
-        taskPriceController.text = widget.taskDetails.taskPrice;
+        task = widget.task;
+        taskTitleController.text = widget.task.title;
+        taskDescController.text = widget.task.description;
+        taskPriceController.text = widget.task.price.toString();
       });
     }
   }
@@ -90,6 +86,10 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height),
+    );
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 0.0,
@@ -103,7 +103,11 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
                     GestureDetector(
                       child: Container(
                         padding: EdgeInsets.only(left: 20.0),
-                        child: Icon(Icons.arrow_back_ios, size: 35.0, color: Color(0xFF098CC3)),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          size: Variables.headerMenuSize.sp,
+                          color: Color(0xFF098CC3),
+                        ),
                       ),
                       onTap: () {
                         onRouteSubCategoriesPage();
@@ -115,7 +119,7 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
                         child: Text(
                           "Please enter details about your task",
                           style: TextStyle(
-                              fontSize: 23.0,
+                              fontSize: Variables.headerTextSize.sp,
                               fontWeight: FontWeight.bold
                           ),
                         ),
@@ -134,9 +138,7 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
                         children: [
                           Container(
                             width: MediaQuery.of(context).size.width * 0.90,
-                            height: MediaQuery.of(context).size.height * 0.22,
                             child: Card(
-                              clipBehavior: Clip.antiAlias,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
@@ -148,9 +150,9 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
                                   Padding(
                                     padding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 5.0),
                                     child: Text(
-                                      'Task Title',
+                                      "Task Title",
                                       style: TextStyle(
-                                        fontSize: 17.0,
+                                        fontSize: Variables.textSizeS.sp,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -166,22 +168,20 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
                                     child: TextFormField(
                                       controller: taskTitleController,
                                       keyboardType: TextInputType.text,
+                                      textInputAction: TextInputAction.next,
                                       maxLines: 3,
-                                      style: TextStyle(fontSize: 19.0),
+                                      style: TextStyle(fontSize: Variables.textSizeS.sp),
                                       decoration: InputDecoration.collapsed(
                                         hintText: "Please enter your task title",
                                       ),
                                       onSaved: (input) {
                                         setState(() {
-                                          taskDetails.taskTitle = input;
+                                          task.title = input;
                                         });
                                       },
                                       validator: (value) {
                                         if (value.isEmpty) {
                                           return "Task title cannot be blank";
-                                        }
-                                        else if (value.length < 20) {
-                                          return "Task title must be at least 20 characters";
                                         }
                                         else {
                                           return null;
@@ -196,7 +196,6 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
 
                           Container(
                             width: MediaQuery.of(context).size.width * 0.90,
-                            height: MediaQuery.of(context).size.height * 0.35,
                             child: Card(
                               clipBehavior: Clip.antiAlias,
                               shape: RoundedRectangleBorder(
@@ -212,7 +211,7 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
                                     child: Text(
                                       "Task Description",
                                       style: TextStyle(
-                                        fontSize: 17.0,
+                                        fontSize: Variables.textSizeS.sp,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -228,22 +227,20 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
                                     child: TextFormField(
                                       controller: taskDescController,
                                       keyboardType: TextInputType.text,
+                                      textInputAction: TextInputAction.next,
                                       maxLines: 7,
-                                      style: TextStyle(fontSize: 19.0),
+                                      style: TextStyle(fontSize: Variables.textSizeS.sp),
                                       decoration: InputDecoration.collapsed(
                                         hintText: "Please enter task description in details",
                                       ),
                                       onSaved: (input) {
                                         setState(() {
-                                          taskDetails.taskDescription = input;
+                                          task.description = input;
                                         });
                                       },
                                       validator: (value) {
                                         if (value.isEmpty) {
                                           return "Task description cannot be blank";
-                                        }
-                                        else if (value.length < 50) {
-                                          return "Task description must be at least 50 characters";
                                         }
                                         else {
                                           return null;
@@ -258,7 +255,6 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
 
                           Container(
                             width: MediaQuery.of(context).size.width * 0.90,
-                            height: MediaQuery.of(context).size.height * 0.18,
                             child: Card(
                               clipBehavior: Clip.antiAlias,
                               shape: RoundedRectangleBorder(
@@ -273,9 +269,9 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
                                   Padding(
                                     padding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 5.0),
                                     child: Text(
-                                      'Price (Rs)',
+                                      "Price (Rs)",
                                       style: TextStyle(
-                                        fontSize: 17.0,
+                                        fontSize: Variables.textSizeS.sp,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -291,14 +287,15 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
                                     child: TextFormField(
                                       controller: taskPriceController,
                                       keyboardType: TextInputType.number,
+                                      textInputAction: TextInputAction.done,
                                       maxLines: 1,
-                                      style: TextStyle(fontSize: 19.0),
+                                      style: TextStyle(fontSize: Variables.textSizeS.sp),
                                       decoration: InputDecoration.collapsed(
                                         hintText: "Please enter task price",
                                       ),
                                       onSaved: (input) {
                                         setState(() {
-                                          taskDetails.taskPrice = input;
+                                          task.price = int.tryParse(input);
                                         });
                                       },
                                       validator: (value) {
@@ -317,17 +314,17 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
 
                           Container(
                             width: MediaQuery.of(context).size.width * 0.7,
-                            margin: EdgeInsets.only(top: 15.0),
+                            margin: EdgeInsets.only(top: 15.0, bottom: 20.0),
                             child: ElevatedButton(
                               child: Text(
-                                "Submit",
+                                "Next",
                                 style: TextStyle(
-                                  fontSize: 23.0,
+                                  fontSize: Variables.textSizeSl.sp,
                                   color: Colors.white,
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(vertical: 10.0),
+                                padding: EdgeInsets.symmetric(vertical: 5.0),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(18.0),
                                 ),
@@ -350,32 +347,30 @@ class _TaskDetailsPageWidgetState extends State<TaskDetailsPageWidget> {
   }
 
   void onSubmitTaskDetails() {
-    // print("${taskTitleController.text} ${taskDescController.text} ${taskPriceController.text}");
     if(_taskDetailsFormKey.currentState.validate()) {
       _taskDetailsFormKey.currentState.save();
       onRouteTaskAddressPage();
     }
   }
 
+  // For back.
   void onRouteSubCategoriesPage() {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-        SubCategoriesPage(
-          isPostAJob: widget.isPostAJob,
-          selectedCategory: widget.selectedCategory,
-          selectedSubCategories: widget.selectedSubCategories,
-          taskDetails: taskDetails != null ? taskDetails : widget.taskDetails,
+        CategoriesPage(
+          categoryData: widget.categoryData,
+          task: task != null ? task : widget.task,
           address: widget.address,
         )));
   }
 
+  // For forward.
   void onRouteTaskAddressPage() {
+    Util.onShowToast(context, "Please enter address", 2);
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
         TaskAddressPage(
-            isPostAJob: widget.isPostAJob,
-            selectedCategory: widget.selectedCategory,
-            selectedSubCategories: widget.selectedSubCategories,
-            taskDetails: taskDetails != null ? taskDetails : widget.taskDetails,
-            address: widget.address, about: null,
+            categoryData: widget.categoryData,
+            task: task != null ? task : widget.task,
+            address: widget.address,
         )));
   }
 }

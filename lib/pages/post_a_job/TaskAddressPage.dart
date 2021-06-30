@@ -1,35 +1,30 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:task_and_earn/models/Task_Model.dart';
+import 'package:task_and_earn/models/post_a_job/PostAJob.dart';
+import 'package:task_and_earn/services/ApiManager.dart';
+import 'package:task_and_earn/services/TaskService.dart';
+import 'package:task_and_earn/util/Util.dart';
+import 'package:task_and_earn/util/Variables.dart';
 import '../../models/post_a_job/Category.dart';
 import '../../models/post_a_job/Task.dart';
 import 'package:task_and_earn/models/User.dart';
-import 'package:task_and_earn/models/become_a_earner/About_Model.dart';
-import 'package:task_and_earn/models/become_a_earner/Professional.dart';
-import 'package:task_and_earn/pages/become_a_earner/AboutYourself.dart';
-import 'package:task_and_earn/services/CategoryService.dart';
-import 'package:task_and_earn/services/ProfessionalService.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
-import 'package:toast/toast.dart';
-import '../ProgressHUD.dart';
+import '../shared/ProgressHUD.dart';
 import 'JobPostedSuccessPage.dart';
 import 'TaskDetailsPage.dart';
 
-// ignore: must_be_immutable
 class TaskAddressPage extends StatelessWidget {
-  final bool isPostAJob;
-  Category selectedCategory;
-  List<int> selectedSubCategories;
-  TaskDetails taskDetails;
-  Address address;
-  final About about;
+  final CategoryData categoryData;
+  final Task task;
+  final Address address;
 
   TaskAddressPage({
     Key key,
-    @required this.isPostAJob,
-    @required this.selectedCategory,
-    @required this.selectedSubCategories,
-    @required this.taskDetails,
+    @required this.categoryData,
+    @required this.task,
     @required this.address,
-    @required this.about,
   }) : super(key: key);
 
   @override
@@ -37,12 +32,13 @@ class TaskAddressPage extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Task and Earn",
+      theme: ThemeData(
+        fontFamily: "Poppins",
+      ),
       home: TaskAddressPageWidget(
-        isPostAJob: isPostAJob,
-        selectedCategory: selectedCategory,
-        selectedSubCategories: selectedSubCategories,
-        taskDetails: taskDetails,
-        address: address, about: about,
+        categoryData: categoryData,
+        task: task,
+        address: address,
       ),
     );
   }
@@ -50,21 +46,15 @@ class TaskAddressPage extends StatelessWidget {
 
 // ignore: must_be_immutable
 class TaskAddressPageWidget extends StatefulWidget {
-  final bool isPostAJob;
-  Category selectedCategory;
-  List<int> selectedSubCategories;
-  TaskDetails taskDetails;
+  CategoryData categoryData;
+  Task task;
   Address address;
-  About about;
 
   TaskAddressPageWidget({
     Key key,
-    @required this.isPostAJob,
-    @required this.selectedCategory,
-    @required this.selectedSubCategories,
-    @required this.taskDetails,
+    @required this.categoryData,
+    @required this.task,
     @required this.address,
-    @required this.about,
   }) : super(key: key);
 
   @override
@@ -72,11 +62,10 @@ class TaskAddressPageWidget extends StatefulWidget {
 }
 
 class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
-  CategoryService categoryService = new CategoryService();
-  ProfessionalService professionalService = new ProfessionalService();
+  TaskService taskService = new TaskService();
   SharedPref sharedPref = new SharedPref();
   String token;
-  dynamic loggedInUserId;
+  String loggedInUserId;
   String loggedInUserFName;
   String loggedInUserLName;
   bool isApiCallProcess = false;
@@ -87,17 +76,15 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
   final cityController = TextEditingController();
   final pinCodeController = TextEditingController();
   final countryController = TextEditingController();
+  final contactController = TextEditingController();
+  bool _isCheckedTermsCondition = false;
 
   TaskRequest taskRequest = new TaskRequest();
   User user = new User();
-  ProfessionalRequest professionalRequest = new ProfessionalRequest();
 
   @override
   void initState() {
     super.initState();
-    // print("tap selectedCategory ${widget.selectedCategory.toJson()}");
-    // print("tap selectedSubCategories ${widget.selectedSubCategories}");
-    // print("tap taskDetails ${widget.taskDetails.toJson()}");
     if(widget.address != null) {
       print("tap address ${widget.address.toJson()}");
       setState(() {
@@ -107,9 +94,6 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
         pinCodeController.text = widget.address.pincode;
         countryController.text = widget.address.country;
       });
-    }
-    if(widget.about != null) {
-      print("tap about ${widget.about.toJson()}");
     }
     onGetToken();
   }
@@ -127,6 +111,10 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
   }
 
   Widget _uiSetUp(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height),
+    );
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 0.0,
@@ -141,7 +129,11 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                         GestureDetector(
                           child: Container(
                             padding: EdgeInsets.only(left: 20.0),
-                            child: Icon(Icons.arrow_back_ios, size: 35.0, color: Color(0xFF098CC3)),
+                            child: Icon(
+                              Icons.arrow_back_ios,
+                              size: Variables.headerMenuSize.sp,
+                              color: Color(0xFF098CC3),
+                            ),
                           ),
                           onTap: () {
                             onRouteBackPage();
@@ -153,7 +145,7 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                             child: Text(
                               "Please enter address details",
                               style: TextStyle(
-                                  fontSize: 23.0,
+                                  fontSize: Variables.headerTextSize.sp,
                                   fontWeight: FontWeight.bold
                               ),
                             ),
@@ -172,7 +164,6 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                             children: [
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.90,
-                                height: MediaQuery.of(context).size.height * 0.25,
                                 child: Card(
                                   clipBehavior: Clip.antiAlias,
                                   shape: RoundedRectangleBorder(
@@ -186,9 +177,9 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                       Padding(
                                         padding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 5.0),
                                         child: Text(
-                                          'Street',
+                                          "Street",
                                           style: TextStyle(
-                                            fontSize: 17.0,
+                                            fontSize: Variables.textSizeS.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -204,8 +195,9 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                         child: TextFormField(
                                           controller: streetController,
                                           keyboardType: TextInputType.text,
+                                          textInputAction: TextInputAction.next,
                                           maxLines: 3,
-                                          style: TextStyle(fontSize: 19.0),
+                                          style: TextStyle(fontSize: Variables.textSizeS.sp),
                                           decoration: InputDecoration.collapsed(
                                             hintText: "Please enter your street name",
                                           ),
@@ -230,7 +222,6 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
 
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.90,
-                                height: MediaQuery.of(context).size.height * 0.17,
                                 child: Card(
                                   clipBehavior: Clip.antiAlias,
                                   shape: RoundedRectangleBorder(
@@ -244,9 +235,9 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                       Padding(
                                         padding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 5.0),
                                         child: Text(
-                                          'City',
+                                          "City",
                                           style: TextStyle(
-                                            fontSize: 17.0,
+                                            fontSize: Variables.textSizeS.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -262,8 +253,9 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                         child: TextFormField(
                                           controller: cityController,
                                           keyboardType: TextInputType.text,
+                                          textInputAction: TextInputAction.next,
                                           maxLines: 1,
-                                          style: TextStyle(fontSize: 19.0),
+                                          style: TextStyle(fontSize: Variables.textSizeS.sp),
                                           decoration: InputDecoration.collapsed(
                                             hintText: "Please enter city name",
                                           ),
@@ -288,7 +280,6 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
 
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.90,
-                                height: MediaQuery.of(context).size.height * 0.17,
                                 child: Card(
                                   clipBehavior: Clip.antiAlias,
                                   shape: RoundedRectangleBorder(
@@ -302,9 +293,9 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                       Padding(
                                         padding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 5.0),
                                         child: Text(
-                                          'PinCode',
+                                          "PinCode",
                                           style: TextStyle(
-                                            fontSize: 17.0,
+                                            fontSize: Variables.textSizeS.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -320,10 +311,11 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                         child: TextFormField(
                                           controller: pinCodeController,
                                           keyboardType: TextInputType.number,
+                                          textInputAction: TextInputAction.next,
                                           maxLines: 1,
-                                          style: TextStyle(fontSize: 19.0),
+                                          style: TextStyle(fontSize: Variables.textSizeS.sp),
                                           decoration: InputDecoration.collapsed(
-                                            hintText: "Please enter pinCode",
+                                            hintText: "Please enter pincode",
                                           ),
                                           onSaved: (input) {
                                             setState(() {
@@ -332,7 +324,7 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                           },
                                           validator: (value) {
                                             if (value.isEmpty) {
-                                              return "PinCode cannot be blank";
+                                              return "PinCode can't be blank";
                                             } else {
                                               return null;
                                             }
@@ -346,7 +338,6 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
 
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.90,
-                                height: MediaQuery.of(context).size.height * 0.17,
                                 child: Card(
                                   clipBehavior: Clip.antiAlias,
                                   shape: RoundedRectangleBorder(
@@ -360,9 +351,9 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                       Padding(
                                         padding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 5.0),
                                         child: Text(
-                                          'Country',
+                                          "Country",
                                           style: TextStyle(
-                                            fontSize: 17.0,
+                                            fontSize: Variables.textSizeS.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -378,8 +369,9 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                                         child: TextFormField(
                                           controller: countryController,
                                           keyboardType: TextInputType.text,
+                                          textInputAction: TextInputAction.next,
                                           maxLines: 1,
-                                          style: TextStyle(fontSize: 19.0),
+                                          style: TextStyle(fontSize: Variables.textSizeS.sp),
                                           decoration: InputDecoration.collapsed(
                                             hintText: "Please enter country name",
                                           ),
@@ -403,18 +395,194 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
                               ),
 
                               Container(
+                                width: MediaQuery.of(context).size.width * 0.90,
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  elevation: 8,
+                                  shadowColor: Variables.blueColor,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 5.0),
+                                        child: Text(
+                                          "Contact",
+                                          style: TextStyle(
+                                            fontSize: Variables.textSizeS.sp,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Divider(
+                                        color: Colors.blue,
+                                        height: 0.0,
+                                        indent: 10.0,
+                                        endIndent: 20.0,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(10.0),
+                                        child: TextFormField(
+                                          controller: contactController,
+                                          keyboardType: TextInputType.number,
+                                          textInputAction: TextInputAction.done,
+                                          maxLines: 1,
+                                          style: TextStyle(fontSize: Variables.textSizeS.sp),
+                                          decoration: InputDecoration.collapsed(
+                                            hintText: "Please enter contact number",
+                                          ),
+                                          onSaved: (input) {
+                                            setState(() {
+                                              address.contact = input;
+                                            });
+                                          },
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return "Contact number can't be blank";
+                                            }
+                                            else if (value.length < 10) {
+                                              return "Contact number can't be less than 10";
+                                            }
+                                            else {
+                                              return null;
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.90,
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  elevation: 8,
+                                  shadowColor: Variables.blueColor,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 5.0),
+                                        child: Text(
+                                          "Do you wish to provide your contact details to the professionals?",
+                                          style: TextStyle(
+                                            fontSize: Variables.textSizeS.sp,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Divider(
+                                        color: Colors.blue,
+                                        height: 0.0,
+                                        indent: 10.0,
+                                        endIndent: 20.0,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Radio(
+                                            value: "Yes",
+                                            groupValue: address.contactStatus,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                address.contactStatus = value;
+                                              });
+                                            },
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                address.contactStatus = "Yes";
+                                              });
+                                            },
+                                            child: Text(
+                                              "Yes",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: Variables.textSizeS.sp,
+                                              ),
+                                            ),
+                                          ),
+                                          Radio(
+                                            value: "No",
+                                            groupValue: address.contactStatus,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                address.contactStatus = value;
+                                              });
+                                            },
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                address.contactStatus = "No";
+                                              });
+                                            },
+                                            child: Text(
+                                              "No",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: Variables.textSizeS.sp,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      Flex(
+                                          direction: Axis.horizontal,
+                                          children: [
+                                            Checkbox(
+                                              value: _isCheckedTermsCondition,
+                                              onChanged: (bool value) {
+                                                setState(() {
+                                                  _isCheckedTermsCondition = value;
+                                                });
+                                              },
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                "I accept  ",
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              child: Text(
+                                                "terms and conditions",
+                                                style: TextStyle(
+                                                  color: Variables.blueColor,
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                Util.onShowToast(context, "Redirecting to ${ApiManager.tneBaseUrl + "/terms"}", 2);
+                                                Util.launchURL(ApiManager.tneBaseUrl + "/terms");
+                                              },
+                                            ),
+                                          ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              Container(
                                 width: MediaQuery.of(context).size.width * 0.7,
-                                margin: EdgeInsets.only(top: 18.0),
+                                margin: EdgeInsets.only(top: 15.0, bottom: 20.0),
                                 child: ElevatedButton(
                                   child: Text(
                                     "Submit",
                                     style: TextStyle(
-                                      fontSize: 23.0,
+                                      fontSize: Variables.textSizeSl.sp,
                                       color: Colors.white,
                                     ),
                                   ),
                                   style: ElevatedButton.styleFrom(
-                                    padding: EdgeInsets.symmetric(vertical: 10.0),
+                                    padding: EdgeInsets.symmetric(vertical: 5.0),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(18.0),
                                     ),
@@ -450,139 +618,66 @@ class _TaskAddressPageWidgetState extends State<TaskAddressPageWidget> {
     });
   }
 
-  Future onSubmitAddress() async {
-    if(_taskAddressFormKey.currentState.validate()) {
-      _taskAddressFormKey.currentState.save();
-      // print("tap widget.isPostAJob ${widget.isPostAJob}");
-      if(widget.isPostAJob) {
-        await onPostJob();
-      } else {
-        await onCreateProfessional();
-      }
-    }
+  void onRouteBackPage() {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+        TaskDetailsPage(
+          categoryData: widget.categoryData,
+          task: widget.task,
+          address: address != null ? address : widget.address,
+        )));
   }
 
-  void onRouteBackPage() {
-    if(widget.isPostAJob) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-          TaskDetailsPage(
-            isPostAJob: widget.isPostAJob,
-            selectedCategory: widget.selectedCategory,
-            selectedSubCategories: widget.selectedSubCategories,
-            taskDetails: widget.taskDetails,
-            address: address != null ? address : widget.address,
-          )));
-    } else {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-          AboutYourselfPage(
-            isPostAJob: widget.isPostAJob,
-            about: widget.about, selectedCategory: widget.selectedCategory,
-          )));
+  Future onSubmitAddress() async {
+    if(_taskAddressFormKey.currentState.validate()) {
+      if(address.contactStatus != null) {
+        if(_isCheckedTermsCondition) {
+          _taskAddressFormKey.currentState.save();
+          await onPostJob();
+        } else {
+          Util.onShowToast(context, "Please select Terms", 2);
+        }
+      } else {
+        Util.onShowToast(context, "Please select your wish to provide details", 2);
+      }
     }
   }
 
   Future onPostJob() async {
-    if(widget.isPostAJob) {
-      try {
-        setState(() {
-          isApiCallProcess = true;
-          user.userId = int.tryParse(loggedInUserId);
-          user.firstName = loggedInUserFName;//
-          user.lastName = loggedInUserLName;//
+    try {
+      setState(() {
+        isApiCallProcess = true;
+        user.userId = int.tryParse(loggedInUserId);
+        user.firstName = loggedInUserFName;//
+        user.lastName = loggedInUserLName;//
 
-          taskRequest.title = widget.taskDetails.taskTitle;
-          taskRequest.description = widget.taskDetails.taskDescription;
-          taskRequest.price = widget.taskDetails.taskPrice;
+        taskRequest.categoryData = widget.categoryData;
+        taskRequest.task = widget.task;
+        taskRequest.user = user;
+        taskRequest.address = address != null ? address : widget.address;
+      });
 
-          taskRequest.categoryId =
-              widget.selectedCategory.categoryId.toString();
-          taskRequest.address = address != null ? address : widget.address;
-          taskRequest.subCatagoriesId =
-              List.from(widget.selectedSubCategories.map((e) => e));
-          taskRequest.user = user;
-        });
-      } catch (e) {
-        setState(() {
-          isApiCallProcess = false;
-          onShowToast("Something went wrong!", 2);
-        });
-      }
-      await categoryService.onPostAJob(taskRequest).then((res) => {
+      print(taskRequest.toJson());
+      await taskService.onPostAJob(taskRequest).then((res) => {
         setState(() {
           isApiCallProcess = false;
         }),
         if(res.success) {
-          onShowToast("Job Posted Successfully", 3),
+          Util.onShowToast(context, "Job Posted Successfully", 3),
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) =>
               JobPostedSuccessPage(
                 taskRequest: taskRequest, createdTask: res.data,
-                professional: null, professionalRequest: null, isPostAJob: widget.isPostAJob,
               ))),
         } else {
-            onShowToast("Something went wrong!", 2),
+          Util.onShowToast(context, "Something went wrong!", 2),
         }
       });
-    }
-  }
-
-  Future onCreateProfessional() async {
-    print("tap onCreateProfessional");
-    if(!widget.isPostAJob) {
-      try{
-        setState(() {
-          isApiCallProcess = true;
-          professionalRequest.address = address != null ? address : widget.address;
-          professionalRequest.categoryId = widget.selectedCategory.categoryId;
-          professionalRequest.categoryName = widget.selectedCategory.categoryName;//
-
-          professionalRequest.title = widget.about.title;
-          professionalRequest.gender = widget.about.gender;
-          professionalRequest.phone = widget.about.phone;
-          professionalRequest.dob = widget.about.dob;
-          professionalRequest.skills = widget.about.skills;
-          professionalRequest.introduction = widget.about.introduction;
-          professionalRequest.price = widget.about.price;
-
-          user.userId = int.tryParse(loggedInUserId);
-          user.firstName = loggedInUserFName;//
-          user.lastName = loggedInUserLName;//
-          professionalRequest.user = user;
-        });
-        // print("tap professionalRequest ${professionalRequest.toJson()}");
-      } catch(e) {
-        setState(() {
-          isApiCallProcess = false;
-        });
-        onShowToast("Something went wrong!", 2);
-      }
-      await professionalService.onCreateProfessional(professionalRequest).then((res) => {
-        setState(() {
-          isApiCallProcess = false;
-        }),
-        if(res.success) {
-          onShowToast("Profile created Successfully", 3),
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) =>
-              JobPostedSuccessPage(
-                taskRequest: taskRequest, createdTask: null,
-                professionalRequest: professionalRequest,
-                professional: res.data, isPostAJob: widget.isPostAJob,
-              ))),
-        } else {
-          onShowToast("Something went wrong!", 2),
-        }
-      }).catchError((e) {
-        print("$e");
-        setState(() {
-          isApiCallProcess = false;
-        });
-        onShowToast("$e", 2);
+    } catch (e) {
+      print(e);
+      setState(() {
+        isApiCallProcess = false;
+        Util.onShowToast(context, "Something went wrong!", 2);
       });
     }
-  }
-
-  void onShowToast(String msg, int timeInSec) {
-    Toast.show(msg, context, duration: timeInSec, gravity: Toast.BOTTOM);
   }
 }
