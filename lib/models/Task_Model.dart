@@ -1,4 +1,4 @@
-import 'package:task_and_earn/models/become_a_earner/Professional.dart';
+import 'Professional.dart';
 import 'package:task_and_earn/models/post_a_job/Category.dart';
 import 'User.dart';
 
@@ -36,7 +36,7 @@ class Task {
 
   int categoryId;
   int addressId;
-  dynamic userId;
+  int userId;
 
   Address address;
   User user;
@@ -63,7 +63,7 @@ class Task {
   factory Task.fromJson(Map<dynamic, dynamic> json) => new Task(
     taskId: json["taskId"],
     addressId: json["addressId"],
-    userId: json["userId"],
+    userId: json["userId"] != null ? json["userId"] : null,
     categoryId: json["categoryId"],
     title: json["title"],
     description: json["description"],
@@ -74,25 +74,25 @@ class Task {
     updatedAt: DateTime.tryParse(json["updatedAt"]),
     deletedAt: json["deletedAt"],
     address: Address.fromJson(json["address"]),
-    user: User.fromJson(json["User"]),
+    user: json["User"] != null ? User.fromJson(json["User"]) : null,
     professionals: json["professionals"] != null ? List<Professional>.from(json["professionals"].map((x) => x)) : [],
   );
 
   Map<String, dynamic> toJson() => {
     "taskId": taskId,
     "addressId": addressId,
-    "userId": userId,
+    "userId": userId != null ? userId : null,
     "categoryId": categoryId,
     "title": title,
     "description": description,
     "price": price,
     "name": name,
     "postType": postType,
-    "createdAt": createdAt.toIso8601String(),
-    "updatedAt": updatedAt.toIso8601String(),
+    "createdAt": createdAt != null ? createdAt.toIso8601String() : null,
+    "updatedAt": updatedAt != null ? updatedAt.toIso8601String() : null,
     "deletedAt": deletedAt,
-    "address": address.toJson(),
-    "User": user.toJson(),
-    "professionals": professionals.length != 0 ? List<Professional>.from(professionals.map((x) => x)) : [],
+    "address": address != null ? address.toJson() : null,
+    "User": user != null ? user.toJson() : null,
+    "professionals": professionals != null ? professionals.length != 0 ? List<Professional>.from(professionals.map((x) => x)) : [] : [],
   };
 }

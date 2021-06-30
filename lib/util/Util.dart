@@ -20,16 +20,16 @@ class Util {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url';
+      throw "Could not launch $url";
     }
   }
 
   static sendSMS() async {
-    const url = 'sms:7978993074';
+    const url = "sms:7978993074";
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url';
+      throw "Could not launch $url";
     }
   }
 }

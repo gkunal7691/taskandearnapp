@@ -1,5 +1,5 @@
-import '../post_a_job/Category.dart';
-import '../User.dart';
+import 'post_a_job/Category.dart';
+import 'User.dart';
 
 class ProfessionalResponse {
   final bool success;

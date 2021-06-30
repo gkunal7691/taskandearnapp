@@ -1,31 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:task_and_earn/pages/post_a_job/CategoriesPage.dart';
+import 'package:task_and_earn/services/ApiManager.dart';
 import 'package:task_and_earn/util/Util.dart';
-import 'package:toast/toast.dart';
 import '../basic/HomePage.dart';
 
 class TneFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    void onShowToast(String msg, int timeInSec) {
-      Toast.show(msg, context, duration: timeInSec, gravity:  Toast.BOTTOM);
-    }
-
     return BottomNavigationBar(
       onTap: (int index) {
-        print("onTap BottomNavigationBarItem $index");
         if(index == 0) {
-          onShowToast("Redirected to Home", 2);
+          Util.onShowToast(context, "Redirected to Home", 2);
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
         }
         else if(index == 1) {
-          onShowToast("Redirected to Post a Job", 2);
+          Util.onShowToast(context, "Redirected to Post a Job", 2);
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-              CategoriesPage(isPostAJob: true)));
+              CategoriesPage(
+                categoryData: null, address: null, task: null,
+              )));
         }
         else if(index == 2) {
-          onShowToast("Redirecting to Become a Learner", 2);
-          Util.launchURL("https://taskandearn-dev.herokuapp.com/become-earner-login");
+          Util.onShowToast(context, "Redirecting to Become a Learner", 2);
+          Util.launchURL(ApiManager.tneBaseUrl + "/become-earner-login");
         }
       },
       elevation: 30.0,

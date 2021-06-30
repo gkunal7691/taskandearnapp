@@ -1,3 +1,4 @@
+
 class CategoryResponse {
   final bool success;
   final List<Category> data;
@@ -53,28 +54,6 @@ class Category {
     "imagePath": imagePath,
     "updatedAt": updatedAt,
   };
-}
-
-class TaskDetails {
-  String taskTitle;
-  String taskDescription;
-  String taskPrice;
-
-  TaskDetails({this.taskTitle, this.taskDescription, this.taskPrice});
-
-  Map<String, dynamic> toJson() {
-    try {
-      Map<String, dynamic> map = {
-        "taskTitle": taskTitle,
-        "taskDescription": taskDescription,
-        "taskPrice": taskPrice,
-      };
-      return map;
-    } catch(e) {
-      print("cm $e");
-      return null;
-    }
-  }
 }
 
 class Address {

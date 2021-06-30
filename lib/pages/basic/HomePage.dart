@@ -5,7 +5,9 @@ import 'package:jiffy/jiffy.dart';
 import 'package:task_and_earn/Util/SharedPref.dart';
 import 'package:task_and_earn/models/PopularService.dart';
 import 'package:task_and_earn/models/Task_Model.dart';
+import 'package:task_and_earn/pages/shared/TneWebView.dart';
 import 'package:task_and_earn/pages/shared/tne_drawer/tne-drawer.dart';
+import 'package:task_and_earn/services/ApiManager.dart';
 import 'package:task_and_earn/services/CategoryService.dart';
 import 'package:task_and_earn/services/TaskService.dart';
 import 'package:task_and_earn/util/Util.dart';
@@ -14,7 +16,6 @@ import '../shared/ProgressHUD.dart';
 import 'Tasks.dart';
 import '../post_a_job/CategoriesPage.dart';
 import 'LoginPage.dart';
-import 'package:toast/toast.dart';
 import "package:task_and_earn/util/extensions.dart";
 
 class HomePage extends StatelessWidget {
@@ -81,6 +82,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         maxWidth: MediaQuery.of(context).size.width,
         maxHeight: MediaQuery.of(context).size.height),
     );
+    String url;
     return Scaffold(
       key: _scaffoldKey,
       drawer: TneDrawer(
@@ -182,8 +184,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
                 Padding(padding: EdgeInsets.only(right: 20.0)),
                 GestureDetector(
-                  onTap: () {
-                    Util.launchURL("https://taskandearn-dev.herokuapp.com/become-earner-login");
+                  onTap: () => {
+                    url = ApiManager.tneBaseUrl + "/become-earner-login",
+                    Util.onShowToast(context, "Loading $url", 2),
+                    Navigator.pushReplacement(
+                        context, MaterialPageRoute(builder: (context) => TneWebView(launchUrl: url))),
                   },
                   child: Container(
                     width: 140,
@@ -545,7 +550,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         primary: Colors.blue.shade600,
                       ),
                       onPressed: () {
-                        Util.launchURL("https://taskandearn-dev.herokuapp.com/become-earner-login");
+                        Util.launchURL(ApiManager.tneBaseUrl + "/become-earner-login");
                       },
                     ),
                   ),
@@ -623,7 +628,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   }
 
   Future onLogout() async {
-    onShowToast("Logout Successful", 3);
+    Util.onShowToast(context, "Logout Successful", 3);
     await sharedPref.onEmptySharedPreference();
     await sharedPref.onGetSharedPreferencesValue("tokenKey");
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
@@ -631,14 +636,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   void onRouteToCategory(bool isPostAJob) {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-        CategoriesPage(isPostAJob: isPostAJob)));
+        CategoriesPage(
+          categoryData: null, address: null, task: null,
+        )));
   }
 
   void onRouteAllTasks() {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TasksPage(isShowAllTasks: true)));
-  }
-
-  void onShowToast(String msg, int timeInSec) {
-    Toast.show(msg, context, duration: timeInSec, gravity: Toast.BOTTOM);
   }
 }

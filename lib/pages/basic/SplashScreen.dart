@@ -52,16 +52,15 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            child: Image.asset(
-              "assets/icon/app_icon.png",
-              height: 300,
-              color: Colors.black,
-            ),
-          ),
-          // Padding(padding: EdgeInsets.only(top: 20.0)),
+          // Container(
+          //   child: Image.asset(
+          //     "assets/icon/app_icon.png",
+          //     height: 300,
+          //     color: Colors.black,
+          //   ),
+          // ),
           Text(
-            'Task and Earn',
+            "Task and Earn",
             style: TextStyle(
                 fontSize: 33.0,
                 color: Colors.lightBlue,

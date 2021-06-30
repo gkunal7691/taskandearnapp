@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import '../../models/post_a_job/Task.dart';
-import 'package:task_and_earn/models/become_a_earner/Professional.dart';
-import 'package:toast/toast.dart';
+import 'package:task_and_earn/models/Task_Model.dart';
+import 'package:task_and_earn/models/post_a_job/Task.dart';
+import 'package:task_and_earn/pages/shared/tne-footer.dart';
+import 'package:task_and_earn/util/Util.dart';
+import 'package:task_and_earn/util/Variables.dart';
 import '../basic/HomePage.dart';
-import 'CategoriesPage.dart';
 
-// ignore: must_be_immutable
 class JobPostedSuccessPage extends StatelessWidget {
-  final bool isPostAJob;
-  TaskRequest taskRequest;
-  Task createdTask;
-  ProfessionalRequest professionalRequest;
-  Professional professional;
+  final TaskRequest taskRequest;
+  final Task createdTask;
 
   JobPostedSuccessPage({
     Key key,
-    @required this.isPostAJob,
     @required this.taskRequest,
     @required this.createdTask,
-    @required this.professionalRequest,
-    @required this.professional,
   }) : super(key: key);
 
   @override
@@ -28,32 +23,25 @@ class JobPostedSuccessPage extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Task and Earn",
+      theme: ThemeData(
+        fontFamily: "Poppins",
+      ),
       home: JobPostedSuccessPageWidget(
-          isPostAJob: isPostAJob,
           taskRequest: taskRequest,
           createdTask: createdTask,
-          professionalRequest: professionalRequest,
-          professional: professional,
       ),
     );
   }
 }
 
-// ignore: must_be_immutable
 class JobPostedSuccessPageWidget extends StatefulWidget {
-  final bool isPostAJob;
-  TaskRequest taskRequest;
-  Task createdTask;
-  ProfessionalRequest professionalRequest;
-  Professional professional;
+  final TaskRequest taskRequest;
+  final Task createdTask;
 
   JobPostedSuccessPageWidget({
     Key key,
-    @required this.isPostAJob,
     @required this.taskRequest,
     @required this.createdTask,
-    @required this.professionalRequest,
-    @required this.professional,
   }) : super(key: key);
 
   @override
@@ -68,43 +56,23 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
   String addressStreet;
   String addressCity;
   String addressCountry;
-  String price;
 
   @override
   void initState() {
     super.initState();
-    print("jsp isPostAJob ${widget.isPostAJob}");
-    // print("jsp taskRequest ${widget.taskRequest.toJson()}");
-    // print("jsp createdTask ${widget.createdTask.toJson()}");
     if(widget.createdTask != null) {
-      var strDt = DateTime.parse(widget.createdTask.createdAt);
-      createdTaskDate = DateFormat.yMMMMd().format(strDt);
+      // print("jsp createdTask ${widget.createdTask.toJson()}");
+      createdTaskDate = DateFormat.yMMMMd().format(widget.createdTask.createdAt);
       setState(() {
         createdTaskDate = createdTaskDate;
         createdTaskDesc = widget.createdTask.description;
         if(widget.taskRequest != null) {
+          // print("jsp taskRequest ${widget.taskRequest.toJson()}");
           userFirstName = widget.taskRequest.user.firstName;
           userLastName = widget.taskRequest.user.lastName;
-          // addressStreet = widget.taskRequest.address.street;
-          // addressCity = widget.taskRequest.address.city;
-          // addressCountry = widget.taskRequest.address.country;
-          price = widget.createdTask.price;
-        }
-      });
-    }
-    else if(widget.professional != null) {
-      createdTaskDate = DateFormat.yMMMMd().format(widget.professional.createdAt);
-      setState(() {
-        createdTaskDate = createdTaskDate;
-        createdTaskDesc = widget.professional.introduction;
-        price = widget.professional.price.toString();
-        // print("jsp price $price");
-        if(widget.professionalRequest != null) {
-          userFirstName = widget.professionalRequest.user.firstName;
-          userLastName = widget.professionalRequest.user.lastName;
-          // addressStreet = widget.professionalRequest.address.street;
-          // addressCity = widget.professionalRequest.address.city;
-          // addressCountry = widget.professionalRequest.address.country;
+          addressStreet = widget.taskRequest.address.street;
+          addressCity = widget.taskRequest.address.city;
+          addressCountry = widget.taskRequest.address.country;
         }
       });
     }
@@ -117,11 +85,15 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height),
+    );
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0.0,
       ),
-      bottomNavigationBar: _bottomNavigationBar(context),
+      bottomNavigationBar: TneFooter(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,7 +108,7 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                   children: [
                     Container(
                       child: Image.asset(
-                        widget.isPostAJob ? "assets/images/mail_sent.png" : "assets/images/undraw_profile.png",
+                        "assets/images/mail_sent.png",
                         width: MediaQuery.of(context).size.width * 0.35,
                         fit: BoxFit.cover,
                       ),
@@ -144,12 +116,11 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                     Padding(
                       padding: EdgeInsets.only(top: 15.0),
                       child: Text(
-                        widget.isPostAJob ? "Job posted successfully" : "Profile created successfully",
+                        "Job posted successfully",
                         style: TextStyle(
-                          fontSize: 22.0,
+                          fontSize: Variables.textSizeSl.sp,
                           fontWeight: FontWeight.bold,
                         ),
-                        // style: GoogleFonts.poppins(),
                       ),
                     ),
                   ],
@@ -160,9 +131,9 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
             Container(
               padding: EdgeInsets.only(left: 20.0, top: 15.0),
               child: Text(
-                widget.isPostAJob ? "You posted" : "Your profile",
+                "You posted",
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: Variables.textSizeSl.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -179,9 +150,9 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.createdTask != null ? widget.createdTask.title : widget.professional.title,
+                          widget.createdTask != null ? widget.createdTask.title : "N/A",
                           style: TextStyle(
-                            fontSize: 18.0,
+                            fontSize: Variables.textSizeS.sp,
                             color: Color(0xFF098CC3),
                             fontWeight: FontWeight.bold,
                           ),
@@ -193,20 +164,20 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                             Icon(
                               Icons.person,
                               color: Colors.black,
-                              size: 25.0,
+                              size: Variables.textSizeSl.sp,
                             ),
                             Padding(padding: EdgeInsets.only(left: 10.0)),
                             Text(
                               userFirstName,
                               style: TextStyle(
-                                fontSize: 18.0,
+                                fontSize: Variables.textSizeS.sp,
                               ),
                             ),
                             Padding(padding: EdgeInsets.only(left: 3.0)),
                             Text(
                               userLastName,
                               style: TextStyle(
-                                fontSize: 18.0,
+                                fontSize: Variables.textSizeS.sp,
                               ),
                             ),
                           ],
@@ -218,13 +189,13 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                             Icon(
                               Icons.location_pin,
                               color: Colors.black,
-                              size: 25.0,
+                              size: Variables.textSizeSl.sp,
                             ),
                             Padding(padding: EdgeInsets.only(left: 10.0)),
                             Text(
                               addressStreet,
                               style: TextStyle(
-                                fontSize: 18.0,
+                                fontSize: Variables.textSizeS.sp,
                               ),
                             ),
                           ],
@@ -240,14 +211,14 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                                   Text(
                                     "City:",
                                     style: TextStyle(
-                                      fontSize: 18.0,
+                                      fontSize: Variables.textSizeS.sp,
                                     ),
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 3.0)),
                                   Text(
                                     addressCity,
                                     style: TextStyle(
-                                      fontSize: 18.0,
+                                      fontSize: Variables.textSizeS.sp,
                                     ),
                                   ),
                                 ],
@@ -259,13 +230,13 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                                   Icon(
                                     Icons.watch_later_rounded,
                                     color: Colors.black,
-                                    size: 27.0,
+                                    size: Variables.textSizeSl.sp,
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 3.0)),
                                   Text(
                                     createdTaskDate,
                                     style: TextStyle(
-                                      fontSize: 18.0,
+                                      fontSize: Variables.textSizeS.sp,
                                     ),
                                   ),
                                 ],
@@ -284,14 +255,14 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                                   Text(
                                     "Country:",
                                     style: TextStyle(
-                                      fontSize: 18.0,
+                                      fontSize: Variables.textSizeS.sp,
                                     ),
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 3.0)),
                                   Text(
                                     addressCountry,
                                     style: TextStyle(
-                                      fontSize: 18.0,
+                                      fontSize: Variables.textSizeS.sp,
                                     ),
                                   ),
                                 ],
@@ -303,14 +274,14 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                                   Text(
                                     '\u{20B9}',
                                     style: TextStyle(
-                                      fontSize: 20.0,
+                                      fontSize: Variables.textSizeS.sp,
                                     ),
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 3.0)),
                                   Text(
-                                    price,
+                                    "${widget.createdTask.price}",
                                     style: TextStyle(
-                                      fontSize: 18.0,
+                                      fontSize: Variables.textSizeS.sp,
                                     ),
                                   ),
                                 ],
@@ -323,7 +294,7 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
                         Text(
                           "Task Description:   " + createdTaskDesc,
                           style: TextStyle(
-                            fontSize: 18.0,
+                            fontSize: Variables.textSizeS.sp,
                           ),
                         ),
                       ],
@@ -336,17 +307,17 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
             Center(
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.7,
-                margin: EdgeInsets.only(top: 18.0),
+                margin: EdgeInsets.symmetric(vertical: 18.0),
                 child: ElevatedButton(
                   child: Text(
                     "Continue",
                     style: TextStyle(
-                      fontSize: 23.0,
+                      fontSize: Variables.textSizeSl.sp,
                       color: Colors.white,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 10.0),
+                    padding: EdgeInsets.symmetric(vertical: 5.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
                     ),
@@ -364,64 +335,8 @@ class _JobPostedSuccessPageWidgetState extends State<JobPostedSuccessPageWidget>
     );
   }
 
-  Widget _bottomNavigationBar(BuildContext context) {
-    return BottomNavigationBar(
-      onTap: (int index) {
-        print("onTap BottomNavigationBarItem $index");
-        if(index == 0) {
-          onShowToast("Redirected to Home", 2);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
-        }
-        else if(index == 1) {
-          onShowToast("Redirected to Post a Job", 2);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-              CategoriesPage(isPostAJob: true)));
-        }
-        else if(index == 2) {
-          onShowToast("Redirected to Become a Learner", 2);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-              CategoriesPage(isPostAJob: false)));
-        }
-      },
-      elevation: 30.0,
-      selectedItemColor: Color(0xFF098CC3),
-      unselectedItemColor: Color(0xFF098CC3),
-      selectedFontSize: 15.0,
-      unselectedFontSize: 15.0,
-      items: [
-        BottomNavigationBarItem(
-            icon: Icon(
-              Icons.house_outlined,
-              size: 35.0,
-            ),
-            label: "Home",
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(
-            "assets/images/head_hunting.png",
-            color: Colors.blue.shade600,
-            height: 30.0,
-          ),
-          label: "Post a Job",
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(
-            "assets/images/salary.png",
-            color: Colors.blue.shade600,
-            height: 30.0,
-          ),
-          label: "Become a Learner",
-        ),
-      ],
-    );
-  }
-
   void onTapContinue() {
-    onShowToast("Redirected to Home", 2);
+    Util.onShowToast(context, "Redirected to Home", 2);
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
-  }
-
-  void onShowToast(String msg, int timeInSec) {
-    Toast.show(msg, context, duration: timeInSec, gravity:  Toast.BOTTOM);
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:task_and_earn/models/Task_Model.dart';
 import 'package:task_and_earn/pages/shared/tne-footer.dart';
+import 'package:task_and_earn/services/ApiManager.dart';
 import 'package:task_and_earn/services/TaskService.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
 import 'package:task_and_earn/util/Util.dart';
@@ -379,7 +380,7 @@ class _TasksPageWidgetState extends State<TasksPageWidget> {
                         primary: Colors.blue.shade600,
                       ),
                       onPressed: () {
-                        Util.launchURL("https://taskandearn-dev.herokuapp.com/become-earner-login");
+                        Util.launchURL(ApiManager.tneBaseUrl + "/become-earner-login");
                         // print(Variables.recentTaskCardH);
                         // print((Variables.recentTaskCardH + 15.0) * taskList.length);
                         // print(MediaQuery.of(context).size.height);

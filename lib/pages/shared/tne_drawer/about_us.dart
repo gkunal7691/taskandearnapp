@@ -9,7 +9,7 @@ class AboutUs extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          fontFamily: 'Poppins',
+          fontFamily: "Poppins",
         ),
         title: "Task and Earn",
         home: AboutUsWidget(),
@@ -35,6 +35,10 @@ class _AboutUsWidgetState extends State<AboutUsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height),
+    );
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0.0,
