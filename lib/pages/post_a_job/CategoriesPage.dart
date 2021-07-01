@@ -362,15 +362,14 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
   }
 
   Widget _itemThumbnail(Category category) {
-    String img = "https://miro.medium.com/max/74/1*LDhO2cZl9_ROLxXT_W4qhw.png";
     return Container(
       padding: EdgeInsets.only(left: 10.0),
       constraints: BoxConstraints.tightFor(height: 40.0, width: 40.0),
       child: category.imagePath == null ? null :
         Image.network(
-          img,
+          category.icon != null ? category.icon : "https://miro.medium.com/max/74/1*LDhO2cZl9_ROLxXT_W4qhw.png",
           fit: BoxFit.fitWidth,
-          color: Color(0xFF098CC3),
+          color: Variables.blueColor,
         ),
     );
   }
@@ -379,7 +378,7 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
     return Text(
       category.categoryName,
       style: TextStyle(
-        fontSize: 16.0,
+        fontSize: Variables.textSizeS.sp,
         color: Colors.black,
         fontWeight: FontWeight.bold,
       ),

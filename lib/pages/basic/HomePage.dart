@@ -101,7 +101,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     child: Icon(
                         Icons.menu,
                         size: Variables.headerMenuSize.sp,
-                        color: Color(0xFF098CC3),
+                        color: Variables.blueColor,
                     ),
                   ),
                   onTap: () {
@@ -155,25 +155,31 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     height: 150,
                     child: Card(
                       shape: RoundedRectangleBorder(
-                        side: new BorderSide(color: Colors.lightBlue, width: 1.0),
+                        side: new BorderSide(
+                          color: Variables.blueColor,
+                          width: 1.0,
+                        ),
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       elevation: 20,
-                      shadowColor: Colors.lightBlue,
+                      shadowColor: Variables.blueColor,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
                             "assets/images/head_hunting.png",
                           ),
-                          Padding(padding: EdgeInsets.only(top: 10.0)),
-                          Text(
-                            "Post a Job",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: Variables.cardTextSizeM.sp,
-                              color: Color(0xFF098CC3),
-                              fontWeight: FontWeight.bold,
+                          Padding(
+                            padding: EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
+                            child: Text(
+                              "Post a Job",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: Variables.cardTextSizeM.sp,
+                                color: Variables.blueColor,
+                                fontWeight: FontWeight.bold,
+                                height: 1.2.sp,
+                              ),
                             ),
                           ),
                         ],
@@ -182,13 +188,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   ),
                 ),
 
-                Padding(padding: EdgeInsets.only(right: 20.0)),
+                Padding(padding: EdgeInsets.only(right: 10.0)),
                 GestureDetector(
                   onTap: () => {
                     url = ApiManager.tneBaseUrl + "/become-earner-login",
                     Util.onShowToast(context, "Loading $url", 2),
                     Navigator.pushReplacement(
-                        context, MaterialPageRoute(builder: (context) => TneWebView(launchUrl: url))),
+                      context, MaterialPageRoute(builder: (context) => TneWebView(launchUrl: url))),
                   },
                   child: Container(
                     width: 140,
@@ -197,22 +203,24 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),
-                      elevation: 15,
+                      elevation: 10,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
                             "assets/images/salary.png",
                           ),
-                          Padding(padding: EdgeInsets.only(top: 10.0)),
-                          Text(
-                            "Become a Earner",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: Variables.cardTextSizeM.sp,
-                              color: Color(0xff858585),
-                              fontWeight: FontWeight.bold,
-                              height: 1.2.sp,
+                          Padding(
+                            padding: EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
+                            child: Text(
+                              "Become a Earner",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: Variables.cardTextSizeM.sp,
+                                color: Color(0xff858585),
+                                fontWeight: FontWeight.bold,
+                                height: 1.2.sp,
+                              ),
                             ),
                           ),
                         ],
@@ -223,7 +231,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               ],
             ),
 
-            Padding(padding: EdgeInsets.only(top: 5.0)),
+            Padding(padding: EdgeInsets.only(top: 30.0)),
             Row(
               children: [
                 Padding(padding: EdgeInsets.only(left: 20.0)),
@@ -231,7 +239,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   "Popular Services",
                   style: TextStyle(
                     fontSize: Variables.textSizeM.sp,
-                    color: Color(0xFF098CC3),
+                    color: Variables.blueColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -241,7 +249,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             Container(
               height: Variables.serviceCardH.h,
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(top: 5.0),
+              padding: EdgeInsets.only(top: 5.0, left: 10.0),
               child: ListView.builder(
                 controller: _serviceScrollController,
                 scrollDirection: Axis.horizontal,
@@ -250,6 +258,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               ),
             ),
 
+            Padding(padding: EdgeInsets.only(top: 30.0)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -259,7 +268,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     "Recent Tasks",
                     style: TextStyle(
                       fontSize: Variables.textSizeM.sp,
-                      color: Color(0xFF098CC3),
+                      color: Variables.blueColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -274,7 +283,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       "see all",
                       style: TextStyle(
                         fontSize: Variables.textSizeS.sp,
-                        color: Color(0xFF098CC3),
+                        color: Variables.blueColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -286,7 +295,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             Container(
               height: Variables.recentTaskCardH.h,
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(top: 0.0),
+              padding: EdgeInsets.only(top: 0.0, left: 10.0),
               child: ListView.builder(
                 controller: _taskScrollController,
                 scrollDirection: Axis.horizontal,
@@ -318,7 +327,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       width: MediaQuery.of(context).size.width * 0.66,
       child: Card(
           elevation: 3.0,
-          margin: EdgeInsets.only(right: 15.0, bottom: 3.0),
+          margin: EdgeInsets.only(right: 15.0, bottom: 6.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -368,8 +377,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     return Container(
       width: MediaQuery.of(context).size.width * 0.66,
       child: Card(
-        elevation: 3.0,
-        margin: EdgeInsets.only(right: 15.0, bottom: 5.0),
+        elevation: 5.0,
+        margin: EdgeInsets.only(right: 15.0, bottom: 10.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -415,8 +424,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: Variables.textSizeXs.sp,
-                        color: Color(0xFF098CC3),
-                        fontWeight: FontWeight.w600,
+                        color: Variables.blueColor,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -547,7 +556,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
                         ),
-                        primary: Colors.blue.shade600,
+                        primary: Variables.blueColor,
                       ),
                       onPressed: () {
                         Util.launchURL(ApiManager.tneBaseUrl + "/become-earner-login");

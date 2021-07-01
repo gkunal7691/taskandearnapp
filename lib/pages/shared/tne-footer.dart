@@ -3,6 +3,7 @@ import 'package:task_and_earn/pages/post_a_job/CategoriesPage.dart';
 import 'package:task_and_earn/services/ApiManager.dart';
 import 'package:task_and_earn/util/Util.dart';
 import '../basic/HomePage.dart';
+import 'TneWebView.dart';
 
 class TneFooter extends StatelessWidget {
   @override
@@ -21,8 +22,11 @@ class TneFooter extends StatelessWidget {
               )));
         }
         else if(index == 2) {
-          Util.onShowToast(context, "Redirecting to Become a Learner", 2);
-          Util.launchURL(ApiManager.tneBaseUrl + "/become-earner-login");
+          // Util.launchURL(ApiManager.tneBaseUrl + "/become-earner-login");
+          String url = ApiManager.tneBaseUrl + "/become-earner-login";
+          Util.onShowToast(context, "Loading $url", 2);
+          Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => TneWebView(launchUrl: url)));
         }
       },
       elevation: 30.0,

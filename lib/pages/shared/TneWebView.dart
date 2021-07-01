@@ -59,6 +59,7 @@ class _TneWebViewWidgetState extends State<TneWebViewWidget> {
   @override
   void dispose() {
     super.dispose();
+    flutterWebviewPlugin.dispose();
   }
 
   @override

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task_and_earn/pages/dialogs/forgot_password.dart';
+import 'package:task_and_earn/services/ApiManager.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
 import 'package:task_and_earn/models/Login_Model.dart';
+import 'package:task_and_earn/util/Util.dart';
 import 'package:task_and_earn/util/Variables.dart';
 import 'HomePage.dart';
 import '../shared/ProgressHUD.dart';
 import 'package:task_and_earn/services/UserService.dart';
-import 'package:toast/toast.dart';
 import 'SignUpPage.dart';
 
 class LoginPage extends StatelessWidget {
@@ -67,16 +69,20 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
   }
 
   Widget _uiSetUp(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height),
+    );
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
-                child: Image.asset(
-                  "assets/images/login.png",
+                child: Image.network(
+                  ApiManager.tneBaseUrl + "/assets/image/tne_app_login_img.jpeg",
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.24,
+                  height: MediaQuery.of(context).size.height * 0.30,
                   fit: BoxFit.fill,
                 ),
               ),
@@ -87,7 +93,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                   Text(
                     "Welcome Back",
                     style: TextStyle(
-                      fontSize: Variables.textSizeL,
+                      fontSize: Variables.textSizeXl.sp,
                       color: Color(0xFF039BE5),
                       fontWeight: FontWeight.bold,
                     ),
@@ -106,9 +112,9 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 25.0),
                             child: Text(
-                              'Log In',
+                              "Log In",
                               style: TextStyle(
-                                fontSize: Variables.textSizeM,
+                                fontSize: Variables.textSizeSl.sp,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -116,9 +122,9 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 25.0),
                             child: Text(
-                              'Sign Up',
+                              "Sign Up",
                               style: TextStyle(
-                                fontSize: Variables.textSizeM,
+                                fontSize: Variables.textSizeSl.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Variables.blueColor,
                               ),
@@ -127,7 +133,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                         ],
                         onPressed: (int index) {
                           setState(() {
-                            for (int i = 0; i < isSelected.length; i++) {
+                            for(int i = 0; i < isSelected.length; i++) {
                               isSelected[i] = i == index;
                             }
                           });
@@ -211,7 +217,6 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                           },
                           child: Text(
                             "Forgot Password?",
-                            textAlign: TextAlign.right,
                           ),
                         ),
                       ),
@@ -219,21 +224,20 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                   ),
 
                   Container(
-                    padding: EdgeInsets.only(top: 50.0),
+                    padding: EdgeInsets.only(top: 50.0, bottom: 20.0),
+                    width: MediaQuery.of(context).size.width * 0.65,
                     // ignore: deprecated_member_use
                     child: RaisedButton(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 5.0,
-                        horizontal: MediaQuery.of(context).size.width * 0.25,
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 5.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20.0)),
                       ),
                       child: Text(
                         "Log In",
                         style: TextStyle(
-                          fontSize: Variables.textSizeL,
+                          fontSize: Variables.textSizeL.sp,
                           color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       color: Variables.blueColor,
@@ -286,7 +290,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
   }
 
   onRouteToHome() {
-    onShowToast("Login Successful", 4);
+    Util.onShowToast(context, "Login Successful", 3);
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
   }
 
@@ -303,9 +307,5 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
         }
       }
     });
-  }
-
-  onShowToast(String msg, int timeInSec) {
-    Toast.show(msg, context, duration: timeInSec, gravity:  Toast.BOTTOM);
   }
 }
