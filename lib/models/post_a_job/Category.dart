@@ -24,6 +24,7 @@ class Category {
   final String description;
   final String imagePath;
   final dynamic updatedAt;
+  final String icon;
 
   Category({
     this.categoryId,
@@ -33,6 +34,7 @@ class Category {
     this.description,
     this.imagePath,
     this.updatedAt,
+    this.icon,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
@@ -43,6 +45,7 @@ class Category {
     description: json["description"],
     imagePath: json["imagePath"],
     updatedAt: json["updatedAt"],
+    icon: json["icon"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -53,6 +56,7 @@ class Category {
     "description": description,
     "imagePath": imagePath,
     "updatedAt": updatedAt,
+    "icon": icon,
   };
 }
 

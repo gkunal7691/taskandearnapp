@@ -2,6 +2,7 @@ import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task_and_earn/models/User.dart';
+import 'package:task_and_earn/services/ApiManager.dart';
 import 'package:task_and_earn/services/UserService.dart';
 import "package:task_and_earn/util/extensions.dart";
 import 'package:task_and_earn/pages/basic/HomePage.dart';
@@ -112,19 +113,12 @@ class _MyProfileWidgetState extends State<MyProfileWidget> {
               Stack(
                 children: [
                   CircularProfileAvatar(
-                    "",
+                    ApiManager.tneBaseUrl + "/assets/icon/undraw_profile.png",
                     radius: 85,
                     backgroundColor: Colors.transparent,
-                    // borderWidth: 10,
-                    // borderColor: Colors.brown,
-                    elevation: 5.0,
-                    // foregroundColor: Colors.brown.withOpacity(0.5),
+                    borderWidth: 3,
+                    elevation: 10.0,
                     cacheImage: true,
-                    child: Icon(
-                      Icons.person,
-                      size: 140,
-                      color: Colors.grey.shade500,
-                    ),
                   ),
                   Positioned(
                     top: 7,

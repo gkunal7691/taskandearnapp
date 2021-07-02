@@ -3,10 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:task_and_earn/models/Task_Model.dart';
 import 'package:task_and_earn/pages/shared/tne-footer.dart';
-import 'package:task_and_earn/services/ApiManager.dart';
 import 'package:task_and_earn/services/TaskService.dart';
 import 'package:task_and_earn/util/SharedPref.dart';
-import 'package:task_and_earn/util/Util.dart';
 import 'package:task_and_earn/util/Variables.dart';
 import 'HomePage.dart';
 import '../shared/ProgressHUD.dart';
@@ -93,7 +91,7 @@ class _TasksPageWidgetState extends State<TasksPageWidget> {
                         child: Icon(
                           Icons.arrow_back_ios,
                           size: Variables.headerMenuSize.h,
-                          color: Variables.blueColor
+                          color: Variables.blueColor,
                         ),
                       ),
                       onTap: () {
@@ -105,7 +103,7 @@ class _TasksPageWidgetState extends State<TasksPageWidget> {
                         widget.isShowAllTasks ? "All Tasks" : "My Tasks",
                         style: TextStyle(
                             fontSize: Variables.headerTextSize.sp,
-                            fontWeight: FontWeight.bold
+                            fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -162,8 +160,8 @@ class _TasksPageWidgetState extends State<TasksPageWidget> {
                 ),
 
                 Container(
-                  height: MediaQuery.of(context).size.height,
-                  margin: EdgeInsets.only(top: 10.0),
+                  height: MediaQuery.of(context).size.height * 0.67,
+                  margin: EdgeInsets.only(top: 20.0, bottom: 20.0),
                   child: Scrollbar(
                     isAlwaysShown: true,
                     controller: _scrollController,
@@ -196,7 +194,6 @@ class _TasksPageWidgetState extends State<TasksPageWidget> {
 
   Widget _taskItemUiBuilder(Task task) {
     return Container(
-      height: Variables.recentTaskCardH.h,
       child: Card(
         elevation: 3.0,
         margin: EdgeInsets.only(bottom: 15.0, left: 20.0, right: 20.0),
@@ -230,6 +227,7 @@ class _TasksPageWidgetState extends State<TasksPageWidget> {
 
               Padding(padding: EdgeInsets.only(top: 10.0)),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: EdgeInsets.only(right: 10.0),
@@ -242,11 +240,11 @@ class _TasksPageWidgetState extends State<TasksPageWidget> {
                   Flexible(
                     child: Text(
                       task.title,
-                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: Variables.textSizeXs.sp,
-                        color: Color(0xFF098CC3),
+                        color: Variables.blueColor,
                         fontWeight: FontWeight.w600,
+                        height: 1.2.sp,
                       ),
                     ),
                   ),
@@ -357,37 +355,6 @@ class _TasksPageWidgetState extends State<TasksPageWidget> {
                     ),
                   ),
                 ],
-              ),
-
-              Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    height: 25.0,
-                    child: ElevatedButton(
-                      child: Text(
-                        "Become a Earner",
-                        style: TextStyle(
-                          fontSize: Variables.textSizeNormal.sp,
-                          color: Colors.white,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 20.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                        ),
-                        primary: Colors.blue.shade600,
-                      ),
-                      onPressed: () {
-                        Util.launchURL(ApiManager.tneBaseUrl + "/become-earner-login");
-                        // print(Variables.recentTaskCardH);
-                        // print((Variables.recentTaskCardH + 15.0) * taskList.length);
-                        // print(MediaQuery.of(context).size.height);
-                      },
-                    ),
-                  ),
-                ),
               ),
             ],
           ),

@@ -15,6 +15,7 @@ class CategoryService {
       };
       final response =
         await http.get(Uri.parse(ApiManager.baseUrl + "category"), headers: headers);
+      // print("cs onGetCategories ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 400) {
         return CategoryResponse.fromJson(json.decode(response.body));

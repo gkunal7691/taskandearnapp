@@ -68,7 +68,7 @@ class TneDrawer extends StatelessWidget {
                 "My Profile",
                 style: TextStyle(
                   fontSize: Variables.textSizeM.sp,
-                  color: Colors.lightBlue,
+                  color: Variables.blueColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -82,7 +82,7 @@ class TneDrawer extends StatelessWidget {
                 "My Tasks",
                 style: TextStyle(
                   fontSize: Variables.textSizeM.sp,
-                  color: Colors.lightBlue,
+                  color: Variables.blueColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -100,7 +100,7 @@ class TneDrawer extends StatelessWidget {
                 "All Tasks",
                 style: TextStyle(
                   fontSize: Variables.textSizeM.sp,
-                  color: Colors.lightBlue,
+                  color: Variables.blueColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -118,7 +118,7 @@ class TneDrawer extends StatelessWidget {
                 "About",
                 style: TextStyle(
                   fontSize: Variables.textSizeM.sp,
-                  color: Colors.lightBlue,
+                  color: Variables.blueColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -132,7 +132,7 @@ class TneDrawer extends StatelessWidget {
                 "Why Taskandearn?",
                 style: TextStyle(
                   fontSize: Variables.textSizeM.sp,
-                  color: Colors.lightBlue,
+                  color: Variables.blueColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -146,7 +146,7 @@ class TneDrawer extends StatelessWidget {
                 "Logout",
                 style: TextStyle(
                   fontSize: Variables.textSizeM.sp,
-                  color: Colors.lightBlue,
+                  color: Variables.blueColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),

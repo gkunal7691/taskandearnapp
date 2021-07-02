@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task_and_earn/models/SignUp_Model.dart';
+import 'package:task_and_earn/services/ApiManager.dart';
 import 'package:task_and_earn/services/UserService.dart';
-import 'package:toast/toast.dart';
+import 'package:task_and_earn/util/Util.dart';
+import 'package:task_and_earn/util/Variables.dart';
 import 'LoginPage.dart';
 import '../shared/ProgressHUD.dart';
 
@@ -70,21 +73,25 @@ class _SignUpPageWidgetSate extends State<SignUpPageWidget> {
   }
 
   Widget _uiSetUp(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height),
+    );
     return Form(
       // autovalidateMode: _autoValidateMode ? AutovalidateMode.always : AutovalidateMode.disabled,
       key: _singUpFormKey,
-      child: Container(
-        child: SingleChildScrollView(
+      child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
-                child: Image.asset(
-                  "assets/images/sign_up.png",
+                child: Image.network(
+                  ApiManager.tneBaseUrl + "/assets/image/tne_app_signup_img.jpeg",
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.27,
+                  height: MediaQuery.of(context).size.height * 0.30,
                   fit: BoxFit.fill,
                 ),
               ),
+
               Padding(padding: EdgeInsets.only(top: 10.0)),
               Row(
                 children: [
@@ -93,14 +100,15 @@ class _SignUpPageWidgetSate extends State<SignUpPageWidget> {
                     child: Text(
                       "Create an Account",
                       style: TextStyle(
-                        fontSize: 30.0,
-                        color: Color(0xFF039BE5),
+                        fontSize: Variables.textSizeXl.sp,
+                        color: Variables.blueColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ],
               ),
+
               Padding(padding: EdgeInsets.only(top: 7.0)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -108,27 +116,26 @@ class _SignUpPageWidgetSate extends State<SignUpPageWidget> {
                   ToggleButtons(
                     isSelected: isSelected,
                     borderRadius: BorderRadius.circular(50.0),
-                    // selectedColor: Colors.white,
-                    fillColor: Color(0xFF039BE5),
+                    fillColor: Variables.blueColor,
                     splashColor: Colors.purple,
                     children: [
                       Padding(
                           padding: EdgeInsets.symmetric(horizontal: 30.0),
                           child: Text(
-                            'Log In',
+                            "Log In",
                             style: TextStyle(
-                              fontSize: 23.0,
+                              fontSize: Variables.textSizeSl.sp,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF039BE5),
+                              color: Variables.blueColor,
                             ),
                           ),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 30.0),
                         child: Text(
-                          'Sign Up',
+                          "Sign Up",
                           style: TextStyle(
-                            fontSize: 23.0,
+                            fontSize: Variables.textSizeSl.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -295,22 +302,21 @@ class _SignUpPageWidgetSate extends State<SignUpPageWidget> {
                 ],
               ),
               Container(
-                padding: EdgeInsets.only(top: 30.0, bottom: 30.0),
+                padding: EdgeInsets.symmetric(vertical: 30.0),
+                width: MediaQuery.of(context).size.width * 0.65,
                 // ignore: deprecated_member_use
                 child: RaisedButton(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 10.0,
-                      horizontal: MediaQuery.of(context).size.width * 0.25),
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20.0))),
                   child: Text(
                     "Sign Up",
                     style: TextStyle(
-                      fontSize: 28.0,
+                      fontSize: Variables.textSizeL.sp,
                       color: Colors.white,
                     ),
                   ),
-                  color: Color(0xFF039BE5),
+                  color: Variables.blueColor,
                   splashColor: Colors.purple,
                   elevation: 9.0,
                   highlightElevation: 6.0,
@@ -331,7 +337,7 @@ class _SignUpPageWidgetSate extends State<SignUpPageWidget> {
                           content: Text("Something went wrong, please try again!"))),
                         },
                         if(res.success) {
-                          onShowToast("User created successfully, please login now", 4),
+                          Util.onShowToast(context, "User created successfully, please login now", 3),
                           onRouteToLoginPage(),
                         }
                       });
@@ -349,7 +355,6 @@ class _SignUpPageWidgetSate extends State<SignUpPageWidget> {
             ],
           ),
         ),
-      ),
     );
   }
 
@@ -357,9 +362,5 @@ class _SignUpPageWidgetSate extends State<SignUpPageWidget> {
     Navigator.pushReplacement(context, MaterialPageRoute(
         builder: (context) => LoginPage()
     ));
-  }
-
-  void onShowToast(String msg, int timeInSec) {
-    Toast.show(msg, context, duration: timeInSec, gravity:  Toast.BOTTOM);
   }
 }
